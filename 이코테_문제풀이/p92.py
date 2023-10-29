@@ -5,7 +5,7 @@ data = list(map(int, input().split()))
 
 start_time = time.time()
 
-data.sort()  # nlogn
+data.sort()
 first = data[n-1]  # 가장 큰 수
 second = data[n-2]  # 두 번째로 큰 수
 # (first가 등장한 횟수 * first) + (second가 등장한 횟수 * second)
