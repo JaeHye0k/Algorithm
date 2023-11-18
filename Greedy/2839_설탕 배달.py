@@ -1,28 +1,14 @@
 n = int(input())
-five_kg, three_kg = 0, 0  # 5kg, 3kg 설탕 봉지 개수
-canNotDivision = False
+count_5 = -1  # 5kg 봉지의 개수(나누어 떨어지지 않았을 경우 -1이 출력되게 하기 위해 -1로 초기화)
+count_3 = 0  # 3kg 봉지의 개수
 
-five_kg += n // 5  # 5kg 짜리로 나누기
-n %= 5
-
-# 5kg로 나눠떨어지지 않았을 경우(나머지가 발생한 경우)
-while n != 0:
-    # 나머지를 3kg짜리로 나누기
-    three_kg += n // 3
-    n %= 3
-    # 3kg로도 나눠떨어지지 않고, 5kg 설탕 봉지가 1개 이상 있을 경우
-    if (n != 0) and (five_kg > 0):
-        # 5kg짜리 봉지를 하나씩 풀음
-        five_kg -= 1
-        n += 5
-    # 3k로도 나눠지지 않고, 5kg짜리 여분도 없을 경우
-    elif (n != 0) and (five_kg == 0):
-        canNotDivision = True
+# 일단 가능한 만큼 5kg 봉지에 넣어놓고 3kg로 나누어떨어지지 않을경우 5kg봉지를 하나씩 푼다
+# i가 0일 경우(5로 아예 나누어떨어지지 않는 경우)도 고려해야되기 때문에 range 함수의 두 번째 인자로 -1을 준다.
+for i in range(n//5, -1, -1):
+    remain = n-5*i  # 남은 설탕
+    # 남은 설탕이 3kg로 나눠떨어질 경우
+    if remain % 3 == 0:
+        count_5 = i
+        count_3 = remain // 3
         break
-
-if canNotDivision:
-    result = -1
-else:
-    result = five_kg + three_kg
-
-print(result)
+print(count_5+count_3)
