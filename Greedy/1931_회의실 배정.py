@@ -4,6 +4,7 @@ n = int(input())
 array = []
 for _ in range(n):
     start, end = map(int, input().split())
+    # 리스트 안에 튜블 형태로 저장
     array.append((start, end))
 
 # 시작 시간을 기준으로 정렬
