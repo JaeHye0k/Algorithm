@@ -1,3 +1,3 @@
 const str = "Mozilla";
-const result = [...str];
+const result = str.split("");
 console.log(result);
