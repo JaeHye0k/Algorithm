@@ -8,20 +8,19 @@ let input = [];
 let changedInput = [];
 
 rl.on("line", (line) => {
-  input[0] = line;
+  input = [line];
 }).on("close", () => {
-  str = [...input[0]]; // Spread Operator(...) 로 문자열을 배열로 변환.
+  str = input[0].split(""); // 문자열 -> 배열
   str.forEach((e, i) => {
-    e = e.charCodeAt(0);
-    if (e >= 65 && e <= 90) {
-      // 대문자일 경우
-      str[i] = String.fromCharCode(e).toLowerCase();
-    } else if (e >= 97 && e <= 122) {
+    // 대문자일 경우
+    if (e === e.toUpperCase()) {
+      str[i] = e.toLowerCase();
       // 소문자일 경우
-      str[i] = String.fromCharCode(e).toUpperCase();
+    } else {
+      str[i] = e.toUpperCase();
     }
   });
-  console.log(str.join(""));
+  console.log(str.join("")); // 배열 -> 문자열
 });
 
 // 1. 문자열 -> 배열(spread operator, .split('')), 배열 -> 문자열(.join(''))
