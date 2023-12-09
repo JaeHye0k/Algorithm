@@ -1,21 +1,12 @@
-console.log(solution(0, "wsdawsdassw"));
+const operation = {
+  w: (n) => n + 1,
+  s: (n) => n - 1,
+  d: (n) => n + 10,
+  a: (n) => n - 10,
+};
 
 function solution(n, control) {
-  control.split("").map((e) => {
-    switch (e) {
-      case "w":
-        n += 1;
-        break;
-      case "s":
-        n -= 1;
-        break;
-      case "d":
-        n += 10;
-        break;
-      case "a":
-        n -= 10;
-        break;
-    }
-  });
-  return n;
+  return [...control].reduce((total, e) => operation[e](total), n);
 }
+
+console.log(solution(0, "wsdawsdassw"));
