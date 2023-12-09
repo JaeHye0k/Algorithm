@@ -1,22 +1,15 @@
+const convert = {
+  1: "w",
+  "-1": "s",
+  10: "d",
+  "-10": "a",
+};
+
 function solution(numLog) {
-  var result = "";
-  for (var i = 1; i < numLog.length; i++) {
-    switch ([...numLog][i] - [...numLog][i - 1]) {
-      case 1:
-        result += "w";
-        break;
-      case -1:
-        result += "s";
-        break;
-      case 10:
-        result += "d";
-        break;
-      case -10:
-        result += "a";
-        break;
-    }
-  }
-  return result;
+  // prettier-ignore
+  return numLog.slice(1).map((e, i) => {
+      return convert[e - numLog[i]];
+    }).join("");
 }
 
 console.log(solution([0, 1, 0, 10, 0, 1, 0, 10, 0, -1, -2, -1]));
