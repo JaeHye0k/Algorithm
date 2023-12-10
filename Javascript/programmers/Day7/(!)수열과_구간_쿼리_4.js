@@ -7,5 +7,5 @@ function solution(arr, queries) {
   return arr;
 }
 
-//console.log(solution([1, 2, 3, 4, 5], [[0, 1, 4]]));
-console.log(solution([1, 2, 3, 4, 5], [[1, 3, 3]]));
+console.log(solution([1, 2, 3, 4, 5], [[0, 1, 4]])); // [2, 2, 3, 4, 5]
+console.log(solution([1, 2, 3, 4, 5], [[1, 3, 3]])); // [2, 2, 3, 4, 5]
