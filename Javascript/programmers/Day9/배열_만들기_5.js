@@ -4,8 +4,7 @@
 // 최종적으로 k보다 큰 값들이 배열에 담김
 
 function solution(intStrs, k, s, l) {
-  const answer = intStrs.map((e) => {
-    return Number(e.slice(s, s + l)) > k ? Number(e.slice(s, s + l)) : "";
-  });
-  return answer.filter((e) => e !== "");
+  return intStrs.map((e) => +e.slice(s, s + l)).filter((e) => e > k);
 }
+
+console.log(solution(["0123456789", "9876543210", "9999999999999"], 50000, 5, 5, [56789, 99999]));
