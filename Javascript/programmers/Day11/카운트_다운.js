@@ -1,5 +1,4 @@
 function solution(start, end_num) {
-  const result = [];
-  while (start >= end_num) result.push(start--);
-  return result;
+  //prettier-ignore
+  return Array(start-end_num).fill(start).map((v,i)=>v-i);
 }
