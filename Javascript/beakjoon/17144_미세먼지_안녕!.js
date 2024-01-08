@@ -17,9 +17,9 @@ function solution(input) {
     if (input[i][0] === -1) airconditioner.push(i);
   }
 
-  // 확산
+  // 확산 (모든 확산은 동시에 일어나야 함)
   function spread() {
-    let count;
+    let copiedInput = JSON.parse(JSON.stringify(input));
     for (let row = 0; row < R; row++) {
       for (let col = 0; col < C; col++) {
         if (input[row][col] > 0) {
@@ -29,61 +29,63 @@ function solution(input) {
             const [nRow, nCol] = [x + row, y + col];
             if (nRow > -1 && nCol > -1 && nRow < R && nCol < C && input[nRow][nCol] !== -1) {
               count++;
-              input[nRow][nCol] += Math.floor(input[row][col] / 5);
+              copiedInput[nRow][nCol] += Math.floor(input[row][col] / 5);
             }
           }
-          input[row][col] -= Math.floor(input[row][col] / 5) * count;
+          copiedInput[row][col] -= Math.floor(input[row][col] / 5) * count;
         }
       }
     }
+    return copiedInput;
   }
   // 반시계 방향 순환
   function rotateAntiClockWise() {
     const top = airconditioner[0];
-    for (let i = 1; i < C - 1; i++) {
-      input[top][i + 1] = input[top][i];
+    for (let row = top - 1; row > 0; row--) {
+      input[row][0] = input[row - 1][0];
     }
-    for (let i = top; i > 0; i--) {
-      input[i - 1][C - 1] = input[i][C - 1];
+    for (let col = 1; col < C; col++) {
+      input[0][col - 1] = input[0][col];
     }
-    for (let i = C - 1; i > 0; i--) {
-      input[0][i - 1] = input[0][i];
+    for (let row = 0; row < top; row++) {
+      input[row][C - 1] = input[row + 1][C - 1];
     }
-    for (let i = 1; i > top; i++) {
-      input[i][0] = input[i - 1][0];
+    for (let col = C - 1; col > 1; col--) {
+      input[top][col] = input[top][col - 1];
     }
     input[top][1] = 0;
   }
   // 시계 방향 순환
   function rotateClockWise() {
     const bottom = airconditioner[1];
-    for (let i = 1; i < C - 1; i++) {
-      input[bottom][i + 1] = input[bottom][i];
+    for (let row = bottom + 1; row < R - 1; row++) {
+      input[row][0] = input[row + 1][0];
     }
-    for (let i = bottom; i < R - 1; i++) {
-      input[i + 1][C - 1] = input[i][C - 1];
+    for (let col = 1; col < C; col++) {
+      input[R - 1][col - 1] = input[R - 1][col];
     }
-    for (let i = C - 1; i > 0; i--) {
-      input[R - 1][i - 1] = input[R - 1][i];
+    for (let row = R - 1; row > bottom; row--) {
+      input[row][C - 1] = input[row - 1][C - 1];
     }
-    for (let i = R - 1; i > bottom + 1; i--) {
-      input[i - 1][0] = input[i][0];
+    for (let col = C - 1; col > 1; col--) {
+      input[bottom][col] = input[bottom][col - 1];
     }
     input[bottom][1] = 0;
   }
-
+  function totalDust() {
+    let total = 0;
+    for (let i = 0; i < R; i++) {
+      for (let j = 0; j < C; j++) {
+        if (input[i][j] !== -1) total += input[i][j];
+      }
+    }
+    return total;
+  }
   while (T--) {
-    spread();
+    input = spread();
     rotateAntiClockWise();
     rotateClockWise();
   }
-
-  let total = 0;
-  for (let i = 0; i < R; i++) {
-    for (let j = 0; j < C; j++) {
-      if (input[i][j] !== -1) total += input[i][j];
-    }
-  }
-  return total;
+  return totalDust();
 }
 console.log(solution(input));
