@@ -6,7 +6,7 @@ input_table = []
 result = 1
 for _ in range(n):
     # 각각의 요소들을 정수형으로 변환하는 걸 놓쳐서 계속 '0' == 0이 false가 떠서 문제 푸는데 오래 걸림
-    input_table.append(list(map(int,input().split()))) 
+    input_table.append(list(map(int,input().split())))
 direction = [
     (-1,0), # 북쪽을 바라보고 있을 경우 
     (0,1), # 동쪽을 바라보고 있을 경우
