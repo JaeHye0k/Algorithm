@@ -13,7 +13,7 @@ direction = [
     (1,0), # 남쪽을 바라보고 있을 경우 
     (0,-1) # 서쪽을 바라보고 있을 경우
 ]
-visited = copy.deepcopy(input_table) # 방문한 곳
+visited = copy.deepcopy(input_table) # 방문한 곳을 나타낼 리스트
 visited[a][b] = 1 # 현재 있는 곳 방문 처리
 turn_count = 0
 
@@ -25,14 +25,13 @@ def turn_left():
     turn_count += 1
     
 while(True):
-    # 모든 방향을 방문했을 경우 한 칸 후퇴
+    # 모든 방향을 방문했을 경우 한 칸 후진
     if turn_count == 4:
         x,y = direction[d]
         next_a = x - a
         next_b = y + b
         # 뒤에 바다가 있을 경우 종료
-        if input_table[next_a][next_b] == 1:
-            break
+        if input_table[next_a][next_b] == 1: break
         a = next_a
         b = next_b
         turn_count = 0
