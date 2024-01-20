@@ -8,9 +8,9 @@ function bfs(graph, start, visited) {
   queue.push(start);
   visited[start] = true;
   // 큐가 빌 때까지
-  while (queue.length !== 0) {
+  while (queue.length > 0) {
     // 첫 번째 노드 추출
-    v = queue.shift();
+    let v = queue.shift();
     process.stdout.write(String(v) + " ");
     // 추출한 노드와 인접한 노드 중 방문하지 않은 노드를 전부 큐에 삽입하고 방문처리
     graph[v].forEach((e) => {

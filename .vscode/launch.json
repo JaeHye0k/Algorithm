@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node", // the type of debugger to use for launch configuration.
+      "request": "launch", // the request type of this launch configuration.
+      "name": "Launch Program", // the reader-friendly name to appear in the Debug launch configuration dropdown.
+      "program": "${file}", // an absolute path to the Node.js program to debug.
+      "cwd": "${workspaceRoot}", // launch the program to debug in this directory.
+      "runtimeExecutable": "node" // absolute path to the runtime executable to be used. (absolute path to the "node.exe")
+    }
+  ]
+}
