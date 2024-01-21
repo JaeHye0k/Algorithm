@@ -1,5 +1,5 @@
 const fs = require("fs");
-const input = fs.readFileSync("./Javascript/ex.txt").toString().split("\r\n");
+const input = fs.readFileSync("./Javascript/ex.txt").toString().split("\n");
 const [n, m] = input[0].split(" ").map(Number);
 const graph = [];
 input.slice(1).forEach((e) => {
