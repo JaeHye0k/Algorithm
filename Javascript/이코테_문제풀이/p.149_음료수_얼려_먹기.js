@@ -5,26 +5,32 @@ const graph = [];
 input.slice(1).forEach((e) => {
   graph.push(e.split("").map(Number));
 });
-const visited = Array.from(Array(n), () => Array(m).fill(false));
+// graph의 각 노드의 값은 0과 1로 구성되어 있고 1은 방문할 수 없는 곳을 나타내기 때문에
+// 따로 visited로 방문처리를 해주지 않아도 방문한 노드의 값을 1로 바꿔줌으로써 방문처리를 해줄 수 있다.
+// const visited = Array.from(Array(n), () => Array(m).fill(false));
 let count = 0;
 
-function dfs(graph, v, visited) {
-  let [i, j] = [...v];
-  // 종료조건: 현재 위치가 칸막이(1)거나 방문한 적 있는 곳일 경우
-  if (graph[i][j] || visited[i][j]) return;
-  // 현재 위치가 구멍이 뚫린 부분(0)이면 방문 처리
-  visited[i][j] = true;
-  if (graph[i][j + 1] !== undefined) dfs(graph, [i, j + 1], visited);
-  if (graph[i + 1][j] !== undefined) dfs(graph, [i + 1, j], visited);
+function dfs(x, y) {
+  // 범위를 벗어나면 종료
+  if (x < 0 || x >= n || y < 0 || y >= m) return false;
+  // 현재 노드를 아직 방문하지 않았다면
+  if (graph[x][y] === 0) {
+    // 현재 노드 방문처리
+    graph[x][y] = 1;
+    // 상,하,좌,우 노드 확인
+    dfs(x + 1, y);
+    dfs(x - 1, y);
+    dfs(x, y + 1);
+    dfs(x, y - 1);
+    return true;
+  }
+  return false;
 }
 
 for (let i = 0; i < n; i++) {
   for (let j = 0; j < m; j++) {
-    // 현재 위치가 0이고 아직 방문하지 않았다면 dfs실행
-    if (graph[i][j] == 0 && !visited[i][j]) {
-      count++;
-      dfs(graph, [i, j], visited);
-    }
+    // 현재 위치에서 dfs 실행
+    if (dfs(i, j) === true) count++;
   }
 }
 
