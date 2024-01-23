@@ -18,3 +18,6 @@ function binary_search(array, target, start, end) {
 const result = binary_search(array, target, 0, n - 1);
 if (result) console.log(result + 1);
 else console.log("원소가 존재하지 않습니다.");
+
+// 10 7
+// 1 3 5 7 9 11 13 15 17 19
