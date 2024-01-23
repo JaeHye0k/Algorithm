@@ -10,7 +10,7 @@ n_arr.sort();
 
 for (let i = 0; i < m; i++) {
     let start = 0;
-    let end = n;
+    let end = n - 1;
     let mid;
     let target = m_arr[i];
     let result = false;
@@ -26,3 +26,8 @@ for (let i = 0; i < m; i++) {
     else process.stdout.write("no ");
 }
 console.log();
+
+// 5
+// 8 3 7 9 2
+// 3
+// 5 7 9
