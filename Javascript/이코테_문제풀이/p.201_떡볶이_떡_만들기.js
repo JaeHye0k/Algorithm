@@ -12,7 +12,7 @@ function binary_search(array, m, start, end) {
             sum += array[i] - mid;
         }
         if (sum >= m) {
-            result.push(sum);
+            result.push(mid);
             start = mid + 1;
         } else {
             end = mid - 1;
@@ -20,4 +20,4 @@ function binary_search(array, m, start, end) {
     }
 }
 binary_search(array, m, 0, Math.max(...array));
-console.log(Math.min(...result));
+console.log(Math.max(...result));
