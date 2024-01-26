@@ -1,23 +1,28 @@
-const fs = require('fs');
-const input = fs.readFileSync('./Javascript/ex.txt').toString().trim().split("\n");
-const [n,m] = input[0].split(" ").map(Number);
-const graph = input.slice(1).map(e=>e.split(" ").map(Number));
-graph.unshift([]);
-const visited = Array(n+1).fill(false);
+const fs = require("fs");
+const filePath = process.platform === "linux" ? "/dev/stdin" : "./Javascript/input.txt";
+let input = fs.readFileSync(filePath).toString().trim().split("\n");
+let [n, m] = input[0].split(" ").map(Number);
+let graph = Array.from(Array(n + 1), () => new Array());
+let visited = Array(n + 1).fill(false);
+input.slice(1).forEach((e) => {
+    let [u, v] = e.split(" ").map(Number);
+    graph[u].push(v);
+    graph[v].push(u);
+});
 let result = 0;
 
-function dfs(graph,v,visited){
-    while(!visited[v]){
-        visited[v] = true;
-        v = graph[v][1]; 
-    }
-    return true;
+function dfs(graph, v, visited) {
+    visited[v] = true;
+    graph[v].forEach((e) => {
+        if (!visited[e]) dfs(graph, e, visited);
+    });
 }
 
-for(let i=1; i<=m; i++){
-    const [u,v] = graph[i];
-    if(!visited[u]){
-        if(dfs(graph,u,visited)) result += 1;
+for (let i = 1; i <= n; i++) {
+    if (!visited[i]) {
+        dfs(graph, i, visited);
+        result++;
     }
 }
+
 console.log(result);
