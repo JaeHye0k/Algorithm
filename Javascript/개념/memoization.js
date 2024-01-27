@@ -1,10 +1,12 @@
 // 메모이제이션을 사용하지 않은 피보나치 수열 O(2^N)
+// console.time("duration_time");
 // function fibo1(x) {
 //     if (x === 1 || x === 2) return 1;
 //     return fibo1(x - 1) + fibo1(x - 2);
 // }
 
-// console.log(fibo1(99));
+// console.log(fibo1(45));
+// console.timeEnd("duration_time"); // 4.942s
 // ---------------------------------------------------------------------
 
 // 메모이제이션 기법을 사용한 피보나치 수열 O(N)
@@ -23,6 +25,7 @@
 // ---------------------------------------------------------------------
 
 // 오버헤드를 줄이고 재귀 제한을 예방하기 위해 재귀를 반복문으로 변경
+console.time("time");
 const memo = Array(100).fill(0);
 memo[1] = 1;
 memo[2] = 1;
@@ -33,3 +36,4 @@ for (let i = 3; i <= n; i++) {
 }
 
 console.log(memo[n]);
+console.timeEnd("time"); // 2.502ms
