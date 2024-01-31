@@ -4,13 +4,10 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
-function solution(poke, strNum) {
+function solution(obj, strNum) {
     strNum.forEach((e) => {
-        if (!isNaN(e)) {
-            console.log(poke.at(Number(e) - 1));
-        } else {
-            console.log(poke.indexOf(e) + 1);
-        }
+        let result = Object.keys(obj).find((key) => obj[key] === e) || obj[e];
+        console.log(result);
     });
 }
 
@@ -20,7 +17,11 @@ rl.on("line", (line) => {
 }).on("close", () => {
     const [n, m] = input.shift().split(" ").map(Number);
     const poke = input.filter((e, i) => i < n);
+    const obj = {};
+    poke.forEach((e, i) => {
+        obj[i + 1] = e;
+    });
     const strNum = input.filter((e, i) => i >= n);
-    solution(poke, strNum);
+    solution(obj, strNum);
     process.exit();
 });
