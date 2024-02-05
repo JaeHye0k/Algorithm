@@ -1,16 +1,10 @@
 function solution(sizes) {
-    let width = sizes[0][0];
-    let height = sizes[0][1];
+    // 큰 수는 앞으로, 작은 수는 뒤로 배치
+    sizes = sizes.map(([w, h]) => (w > h ? [w, h] : [h, w]));
+    let [width, height] = [0, 0];
     sizes.forEach(([w, h]) => {
-        let temp1 = Math.abs(width - w) + Math.abs(height - h);
-        let temp2 = Math.abs(width - h) + Math.abs(height - w);
-        if (temp1 <= temp2) {
-            width = w > width ? w : width;
-            height = h > height ? h : height;
-        } else {
-            width = h > width ? h : width;
-            height = w > height ? w : height;
-        }
+        if (w > width) width = w;
+        if (h > height) height = h;
     });
     return width * height;
 }
