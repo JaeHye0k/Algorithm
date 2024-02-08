@@ -1,22 +1,34 @@
 function solution(n, wires) {
-    // n === wires.length+1
-    let visited = Array(n - 1).fill(false);
-    // 하나하나 다 끊어보기.
-    for (let i = 0; i < n - 2; i++) {
+    let graph = Array.from(Array(n + 1), () => []);
+    // 그래프 형태로 만들어주기
+    wires.map(([s, e]) => {
+        graph[s].push(e);
+        graph[e].push(s);
+    });
+    function bfs(root, except) {
+        // except는 다음 노드 사이를 끊어주는 역할을 한다.
+        let queue = [root];
+        let visited = [];
         let count = 0;
-        let w1 = wires.filter((_, j) => j <= i); // O(N)
-        let w2 = wires.filter((_, j) => j > i); // O(N)
-        dfs(i, w1);
-        dfs(i, w2);
+        visited[root] = true;
+        while (queue.length) {
+            let v = queue.shift();
+            graph[v].forEach((e) => {
+                if (!visited[e] && e !== except) {
+                    queue.push(e);
+                    visited[e] = true;
+                    count++;
+                }
+            });
+        }
+        // root에 이어져있는 노드의 개수를 반환한다. (except는 제외)
+        return count;
     }
 
-    function dfs(v, graph) {
-        for (let i = 0; i < graph.length; i++) {
-            if (!visited[i]) {
-                visited[i] = true;
-                let [s, e] = graph[i];
-                dfs(e, graph);
-            }
-        }
-    }
+    let answer = 100; // n의 최대값
+    wires.forEach(([s, e]) => {
+        // 두 그룹으로 나누었을 때 노드의 개수 차이가 가장 작은 값을 저장
+        answer = Math.min(answer, Math.abs(bfs(s, e) - bfs(e, s)));
+    });
+    return answer;
 }
