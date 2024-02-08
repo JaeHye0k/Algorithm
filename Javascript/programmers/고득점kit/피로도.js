@@ -1,32 +1,42 @@
+// bfs
 function solution(k, dungeons) {
-    let n = dungeons.length;
-    let answer = Array(n).fill(0);
-    let visited = Array(n).fill(false);
+    let answer = 0;
+    let queue = [[k, []]];
 
-    for (let i = 0; i < n; i++) {
-        bfs(i);
-    }
-    function bfs() {
-        let queue = [];
-        let tempK = k;
-        while (queue.length) {
-            for (let i = 0; i < n; i++) {
-                if (!visited[i]) queue.push(i);
+    while (queue.length) {
+        let [k, route] = queue.shift();
+        for (let i = 0; i < dungeons.length; i++) {
+            let [a, b] = dungeons[i];
+            if (k >= a && !route.includes(i)) {
+                queue.push([k - b, route.concat(i)]);
             }
-            let v = queue.shift();
-            visited[v] = true;
-            let [a, b] = dungeons[v];
-            // 현재 피로도가 다음 던전의 최소 필요 피로도보다 적을 경우
-            if (tempK < a) {
-                visited[v] = false;
-                continue;
-            }
-            tempK -= b;
-            // if(tempK >= 0) {
-            // for(let i=0; i<n; i++){
-            //     if(!visited[i]) queue.push(i);
-            // }
-            // }
+            answer = Math.max(answer, route.length);
         }
     }
+    return answer;
 }
+// dfs
+// function solution(k, dungeons) {
+//     let n = dungeons.length;
+//     let visited = Array(n).fill(false);
+//     let answer = 0;
+//     function dfs(k, count){
+//         answer = Math.max(answer, count);
+//         for(let i=0; i<n; i++){
+//             let [a,b] = dungeons[i];
+//             if(k >= a && !visited[i]){
+//                 visited[i] = true;
+//                 dfs(k-b, count+1);
+//                 visited[i] = false;
+//             }
+//         }
+//         return answer;
+//     }
+//     dfs(k,0);
+//     return answer;
+// }
+solution(80, [
+    [80, 20],
+    [50, 40],
+    [30, 10],
+]);
