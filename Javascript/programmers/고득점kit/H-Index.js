@@ -1,11 +1,9 @@
 function solution(citations) {
-    citations.sort((a, b) => b - a);
     let answer = 0;
-    for (let i = 0; i < citations.length; i++) {
-        if (citations[i] >= i + 1) {
-            answer++;
-        }
-    }
+    citations.sort((a, b) => b - a);
+    citations.forEach((c, i) => {
+        if (c >= i + 1) answer = i + 1; // 인용된 수가 현재 논문의 개수보다 더 많거나 같아야 함.
+    });
     return answer;
 }
 
