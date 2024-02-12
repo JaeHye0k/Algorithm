@@ -1,18 +1,31 @@
 const fs = require("fs");
 const filePath = process.platform === "linux" ? "/dev/stdin" : "./Javascript/input.txt";
-const input = fs.readFileSync(filePath).toString().trim().split("\n");
-const ch = Number(input[0]);
-const brokenButtonNum = Number(input[1]);
-const brokenButtons = input[2].split(" ").map(Number);
+let [n, m, brokens] = fs.readFileSync(filePath).toString().trim().split("\n");
+brokens = brokens ? brokens.split(" ") : []; // 고장난 버튼이 없을 경우도 고려
 
-let answer = 0; // 버튼을 누른 횟수
-let curCh = 100;
-let buttons = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-buttons = buttons.filter((e) => !brokenButtons.includes(e)); // 고장 나지 않은 버튼
+// 버튼을 누른 횟수 (처음엔 +,- 버튼만 눌러서 목표 채널에 도달 가능한 횟수로 초기화)
+let btnCount = Math.abs(100 - n);
 
-if (curCh === ch) return answer;
-ch.split("").forEach((e) => {});
+// 0~999,999 까지 모든 버튼을 눌러본다
+for (let i = 0; i < 1_000_000; i++) {
+    const numString = i.toString();
+    let isValid = true;
+    // 현재 누른 버튼중에 고장난 버튼이 포함되어 있다면 스킵한다.
+    for (let j = 0; j < numString.length; j++) {
+        if (brokens.includes(numString[j])) {
+            isValid = false;
+            break;
+        }
+    }
+    // 현재 누른 버튼들이 모두 고장나지 않았을 경우 횟수가 더 작은 값으로 갱신
+    if (isValid) {
+        btnCount = Math.min(btnCount, Math.abs(n - i) + numString.length);
+    }
+    // Math.abs(n - i) = 목표 채널과 현재 채널의 채널 수 차이 = 현재 채널(i)에서 '+' 혹은 '-' 버튼만 눌러서 목표 채널(n)로 가기 위한 횟수
+    // numString.length = 현재 채널로 오기위해 누른 숫자 버튼 개수
+}
+console.log(btnCount);
 
-// 1. 현재 채널과 원하는 채널을 비교. => if(curCh === ch) return answer;
-// 2. 채널이 다르다면 원하는 채널의 첫 번째 자리부터 확인해서 고장 나지 않은 버튼으로 갈 수 있는지 확인
-// 각 자릿수에 해당하는 버튼이 고장나지 않았다면 해당 버튼을 누르고, 만약 고장났다면 가장 근접한 버튼 누르기 (절댓값의 차이가 적은 버튼)
+// 1. +,- 버튼만 사용해서 목표 채널에 도착했을 때의 횟수
+// 2. 숫자 버튼과 +,- 버튼 둘 다 사용해서 목표 채널에 도착했을 때의 횟수
+// 1,2 번을 비교하여 더 적은 횟수를 선택.
