@@ -1,10 +1,11 @@
 function solution(sizes) {
-    // 큰 수는 앞으로, 작은 수는 뒤로 배치
-    sizes = sizes.map(([w, h]) => (w > h ? [w, h] : [h, w]));
-    let [width, height] = [0, 0];
+    // 큰 수를 앞으로 오게 정렬
+    sizes = sizes.map((size) => size.sort((a, b) => b - a));
+    let width = 0;
+    let height = 0;
     sizes.forEach(([w, h]) => {
-        if (w > width) width = w;
-        if (h > height) height = h;
+        width = Math.max(w, width);
+        height = Math.max(h, height);
     });
     return width * height;
 }
