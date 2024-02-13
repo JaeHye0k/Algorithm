@@ -5,6 +5,8 @@ const [N, M] = input[0].split(" ").map(Number);
 const [S, E] = input[M + 1].split(" ").map(Number);
 const lines = input.splice(1, M).map((e) => e.split(" ").map(Number));
 const graph = Array.from({ length: N + 1 }, () => new Array());
+// visited[n][0] : n번 정점의 방문 여부
+// visited[n][1] : n번 정점까지의 경로
 const visited = Array.from({ length: N + 1 }, () => [false, []]);
 
 // 그래프 형태로 만들기
@@ -50,24 +52,25 @@ class Queue {
     }
 }
 
-// visited[n][0] : n번 정점의 방문 여부
-// visited[n][1] : n번 정점까지의 경로
+function bfs(start, end) {
+    let queue = new Queue();
+    queue.enqueue(start);
+    while (queue.size()) {
+        let v = queue.dequeue();
+        if (v === end) break;
+        graph[v].forEach((e) => {
+            if (!visited[e][0]) {
+                visited[e][0] = true;
+                visited[e][1] = [...visited[v][1], e];
+                queue.enqueue(e);
+            }
+        });
+    }
+}
 
-let queue = new Queue();
-queue.enqueue(S);
 visited[S][0] = true;
 visited[S][1] = [S];
-while (queue.size()) {
-    let v = queue.dequeue();
-    if (v === E) break;
-    graph[v].forEach((e) => {
-        if (!visited[e][0]) {
-            visited[e][0] = true;
-            visited[e][1] = [...visited[v][1], e];
-            queue.enqueue(e);
-        }
-    });
-}
+bfs(S, E);
 
 // E까지 온 경로에 포함되지 않았다면 방문 해제해주고 경로 초기화
 for (let i = 1; i <= N; i++) {
@@ -77,21 +80,8 @@ for (let i = 1; i <= N; i++) {
     }
 }
 
-// 큐 초기화
-queue = new Queue();
-queue.enqueue(E);
 visited[S][0] = false; // 시작노드로 가야하니 시작 노드도 방문 해제
 visited[S][1] = [];
-while (queue.size()) {
-    let v = queue.dequeue();
-    if (v === S) break;
-    graph[v].forEach((e) => {
-        if (!visited[e][0]) {
-            visited[e][0] = true;
-            visited[e][1] = [...visited[v][1], e];
-            queue.enqueue(e);
-        }
-    });
-}
+bfs(E, S);
 
 console.log(visited[S][1].length - 1);
