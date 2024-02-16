@@ -7,47 +7,47 @@ const db = {};
 keyValue.forEach(([key, value]) => {
     db[key] = value;
 });
+const keys = Object.keys(db)
+    .map(Number)
+    .sort((a, b) => a - b);
+
+function findKey(key) {
+    // 정확히 일치하는 key가 있을 경우
+    if (db[key]) return key;
+    const idx = keys.findIndex((v) => v > key); // key보다 큰 첫 번째 값의 인덱스
+    const leftGap = key - keys[idx - 1];
+    const rightGap = keys[idx] - key;
+    // left가 없는 경우
+    if (idx === 0 && rightGap <= K) return keys[idx];
+    // right가 없는 경우
+    if (idx === -1 && key - keys[keys.length - 1] <= K) return keys[keys.length - 1];
+    // right 값이 key 값에 더 인접해있을 경우
+    if (rightGap < leftGap && rightGap <= K) return keys[idx];
+    // left 값이 key에 더 인접해있을 경우
+    if (rightGap > leftGap && leftGap <= K) return keys[idx - 1];
+    // right 값과 left 값이 key 값에 동일하게 인접해있을 경우
+    if (rightGap === leftGap) return "?";
+    // key값과 인접한 값이 없을 경우
+    return -1;
+}
 
 const answer = [];
 command.forEach(([n, key, value]) => {
-    switch (n) {
-        case 1:
-            db[key] = value;
-            break;
-        case 2:
-            // 정확히 일치하는 key가 있을 경우
-            if (db[key]) db[key] = value;
-            else {
-                // key가 없을 경우
-                // k의 범위를 고려해서 key 찾기 (만약 2개 이상이라면 무시)
-                const temp = [];
-                for (let i = 1; i <= K; i++) {
-                    if (temp.length >= 1) break; // key가 여러개일 경우 반복문 탈출
-                    if (db[key + i]) temp.push(key + i);
-                    if (db[key - i]) temp.push(key - i);
-                }
-                if (temp.length === 1) {
-                    const key = temp.pop();
-                    db[key] = value;
-                }
-            }
-            break;
-        case 3:
-            if (db[key]) answer.push(db[key]);
-            else {
-                // 정확히 일치하는 key가 없을 경우
-                const temp = [];
-                for (let i = 1; i <= K; i++) {
-                    if (temp.length >= 1) break;
-                    if (db[key + i]) temp.push(key + i);
-                    if (db[key - i]) temp.push(key - i);
-                }
-                if (temp.length === 0) answer.push("-1\n");
-                else if (temp.length === 1) answer.push(db[temp.pop()] + "\n");
-                else answer.push("?\n");
-            }
-            break;
+    if (n === 1) {
+        db[key] = value;
+        keys.push(key);
+        keys.sort((a, b) => a - b);
+    } else if (n === 2) {
+        const adjKey = findKey(key);
+        if (adjKey !== "?" && adjKey !== -1) db[adjKey] = value;
+    } else {
+        const adjKey = findKey(key);
+        if (adjKey !== "?" && adjKey !== -1) {
+            answer.push(db[adjKey]);
+        } else {
+            answer.push(adjKey);
+        }
     }
 });
 
-console.log(answer.join(""));
+console.log(answer.join("\n"));
