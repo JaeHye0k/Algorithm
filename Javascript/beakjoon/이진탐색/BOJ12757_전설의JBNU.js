@@ -3,17 +3,15 @@ const input = require("fs").readFileSync(filePath).toString().trim().split("\n")
 const [N, M, K] = input.splice(0, 1)[0].split(" ").map(Number);
 const keyValue = input.splice(0, N).map((e) => e.split(" ").map(Number));
 const command = input.splice(0, M).map((e) => e.split(" ").map(Number));
-const db = {};
+const db = new Map();
 keyValue.forEach(([key, value]) => {
-    db[key] = value;
+    db.set(key, value);
 });
-const keys = Object.keys(db)
-    .map(Number)
-    .sort((a, b) => a - b);
+const keys = [...db.keys()].map(Number).sort((a, b) => a - b);
 
 function findKey(key) {
     // 정확히 일치하는 key가 있을 경우
-    if (db[key]) return key;
+    if (db.has(key)) return key;
     const idx = keys.findIndex((v) => v > key); // key보다 큰 첫 번째 값의 인덱스
     const leftGap = key - keys[idx - 1];
     const rightGap = keys[idx] - key;
@@ -34,16 +32,16 @@ function findKey(key) {
 const answer = [];
 command.forEach(([n, key, value]) => {
     if (n === 1) {
-        db[key] = value;
+        db.set(key, value);
         keys.push(key);
         keys.sort((a, b) => a - b);
     } else if (n === 2) {
         const adjKey = findKey(key);
-        if (adjKey !== "?" && adjKey !== -1) db[adjKey] = value;
+        if (adjKey !== "?" && adjKey !== -1) db.set(adjKey, value);
     } else {
         const adjKey = findKey(key);
         if (adjKey !== "?" && adjKey !== -1) {
-            answer.push(db[adjKey]);
+            answer.push(db.get(adjKey));
         } else {
             answer.push(adjKey);
         }
