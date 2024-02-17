@@ -1,16 +1,23 @@
+const fs = require('fs');
 const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
-const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
+const input = fs.readFileSync(filePath).toString().trim().split('\n');
 const [N, M] = input[0].split(' ').map(Number);
-const road = input.slice(1, M + 1).map((e) => e.split(' ').map(Number));
-const [S, E] = input.at(-1).split(' ').map(Number);
+const [S, E] = input[M + 1].split(' ').map(Number);
+const lines = input.splice(1, M).map((e) => e.split(' ').map(Number));
 const graph = Array.from({ length: N + 1 }, () => new Array());
+// visited[n][0] : n번 정점의 방문 여부
+// visited[n][1] : n번 정점까지의 경로
 const visited = Array.from({ length: N + 1 }, () => [false, []]);
-road.forEach(([s, e]) => {
+
+// 그래프 형태로 만들기
+lines.forEach(([s, e]) => {
     graph[s].push(e);
     graph[e].push(s);
 });
-graph.forEach((row) => {
-    row.sort((a, b) => a - b);
+
+// 작은 수부터 방문해주기 위해 오름차순으로 정렬
+graph.forEach((_, i) => {
+    graph[i].sort((a, b) => a - b);
 });
 
 function bfs(start, end) {
@@ -33,6 +40,7 @@ visited[S][0] = true;
 visited[S][1] = [S];
 bfs(S, E);
 
+// E까지 온 경로에 포함되지 않았다면 방문 해제해주고 경로 초기화
 for (let i = 1; i <= N; i++) {
     if (!visited[E][1].includes(i)) {
         visited[i][0] = false;
@@ -40,7 +48,7 @@ for (let i = 1; i <= N; i++) {
     }
 }
 
-visited[S][0] = false;
+visited[S][0] = false; // 시작노드로 가야하니 시작 노드도 방문 해제
 visited[S][1] = [];
 bfs(E, S);
 
