@@ -3,17 +3,16 @@ const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/inp
 const input = fs.readFileSync(filePath).toString().trim().split('\n');
 const [N, M] = input[0].split(' ').map(Number);
 const [S, E] = input[M + 1].split(' ').map(Number);
-const lines = input.splice(1, M).map((e) => e.split(' ').map(Number));
+const roads = input.splice(1, M).map((e) => e.split(' ').map(Number));
 const graph = Array.from({ length: N + 1 }, () => new Array());
-// visited[n][0] : n번 정점의 방문 여부
-// visited[n][1] : n번 정점까지의 경로
-const visited = Array.from({ length: N + 1 }, () => [false, []]);
-
-// 그래프 형태로 만들기
-lines.forEach(([s, e]) => {
+roads.forEach(([s, e]) => {
     graph[s].push(e);
     graph[e].push(s);
 });
+
+// visited[n][0] : n번 정점의 방문 여부
+// visited[n][1] : n번 정점까지의 경로
+const visited = Array.from({ length: N + 1 }, () => [false, []]);
 
 // 작은 수부터 방문해주기 위해 오름차순으로 정렬
 graph.forEach((_, i) => {
