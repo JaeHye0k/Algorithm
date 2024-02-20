@@ -4,10 +4,8 @@ const [N, M] = input[0].split(' ').map(Number);
 const arr = input.slice(1).map((e) => e.split(' ').map(Number));
 const graph = Array.from({ length: N + 1 }, () => []);
 arr.forEach(([a, b]) => {
-    if (graph[a]) graph[a].push(b);
-    else graph[a] = b;
-    if (graph[b]) graph[b].push(a);
-    else graph[b] = a;
+    graph[a].push(b);
+    graph[b].push(a);
 });
 // 방문하지 않은 노드 = 0, 방문한 노드 = 1, -1 (이분)
 const visited = Array(N + 1).fill(0);
@@ -16,9 +14,8 @@ let answer = 1;
 for (let i = 1; i <= N; i++) {
     // 방문하지 않은 노드라면
     if (visited[i] === 0) {
-        const queue = [];
+        const queue = [i];
         let front = 0;
-        queue.push(i);
         visited[i] = 1;
         while (queue.length > front) {
             const v = queue[front++];
@@ -29,6 +26,7 @@ for (let i = 1; i <= N; i++) {
                 } else if (visited[j] === visited[v]) {
                     // 적대 관계인 노드의 부호가 일치할 경우
                     answer = 0;
+                    break;
                 }
             }
         }
