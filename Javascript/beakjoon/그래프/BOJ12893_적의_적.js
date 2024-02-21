@@ -9,27 +9,30 @@ arr.forEach(([a, b]) => {
 });
 // 방문하지 않은 노드 = 0, 방문한 노드 = 1, -1 (이분)
 const visited = Array(N + 1).fill(0);
-let answer = 1;
 
-for (let i = 1; i <= N; i++) {
+function bfs(cur) {
     // 방문하지 않은 노드라면
-    if (visited[i] === 0) {
-        const queue = [i];
+    if (visited[cur] === 0) {
+        const queue = [cur];
         let front = 0;
-        visited[i] = 1;
+        visited[cur] = 1;
         while (queue.length > front) {
             const v = queue[front++];
-            for (let j of graph[v]) {
-                if (visited[j] === 0) {
-                    visited[j] = visited[v] * -1; // 적대 관계인 노드는 반대 부호
-                    queue.push(j);
-                } else if (visited[j] === visited[v]) {
-                    // 적대 관계인 노드의 부호가 일치할 경우
-                    answer = 0;
-                    break;
-                }
+            for (let next of graph[v]) {
+                if (visited[next] === 0) {
+                    visited[next] = visited[v] * -1; // 적대 관계인 노드는 반대 부호
+                    queue.push(next);
+                } else if (visited[next] === visited[v]) return 0;
             }
         }
+    }
+}
+
+let answer = 1;
+for (let i = 1; i <= N; i++) {
+    if (bfs(i) === 0) {
+        answer = 0;
+        break;
     }
 }
 
