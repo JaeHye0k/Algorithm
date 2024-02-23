@@ -21,11 +21,9 @@ class Heap {
         let index = this.heap.length - 1;
         const lastInsertedNode = this.heap[index]; // 마지막에 삽입된 노드
 
-        // 부모 노드의 key 값이 마지막에 삽입된 노드의 key 값보다 크다면
-        // 부모 노드를 아래로 내려주고 마지막으로 삽입된 노드의 인덱스를 위로 올려준다.
         while (index > 0) {
             const parentIndex = this.getParentIndex(index);
-
+            // 부모 노드의 key 값이 마지막에 삽입된 노드의 key 값보다 크다면 부모 노드를 아래로 내려준다.
             if (this.heap[parentIndex].key > lastInsertedNode.key) {
                 this.heap[index] = this.heap[parentIndex];
                 index = parentIndex;
@@ -41,7 +39,7 @@ class Heap {
         const count = this.heap.length;
         const rootNode = this.heap[0];
 
-        if (count <= 0) return undefined;
+        if (count === 0) return undefined;
         if (count === 1) this.heap = [];
         else {
             this.heap[0] = this.heap.pop(); // 끝에 있는 노드를 부모로 만들고
@@ -60,9 +58,11 @@ class Heap {
             const leftChildIndex = this.getLeftChildIndex(index);
             const rightChildIndex = this.getRightChildIndex(index);
             // 왼쪽, 오른쪽 노드 중 더 작은 노드를 찾는다.
-            const smallerChildIndex = rightChildIndex < count && this.heap[rightChildIndex] < this.heap[leftChildIndex] ? rigthChildIndex : leftChildIndex;
+            // rightChildIndex < count : leftChild만 있는 트리일 경우 false
+            const smallerChildIndex = rightChildIndex < count && this.heap[rightChildIndex].key < this.heap[leftChildIndex].key ? rightChildIndex : leftChildIndex;
 
             // 자식의 key 값이 루트 노드의 key 값보다 작다면 위로 끌어올린다.
+            // key 값이 같은 경우도 포함하는 이유는 index = smallerChildIndex 를 수행해주기 위해서.
             if (this.heap[smallerChildIndex].key <= rootNode.key) {
                 this.heap[index] = this.heap[smallerChildIndex];
                 index = smallerChildIndex;
@@ -82,9 +82,9 @@ class PriorityQueue extends Heap {
     size = () => this.heap.length;
 }
 
-const fs = require("fs");
-const filePath = process.platform === "linux" ? "/dev/stdin" : "./Javascript/input.txt";
-const input = fs.readFileSync(filePath).toString().trim().split("\n");
+const fs = require('fs');
+const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
+const input = fs.readFileSync(filePath).toString().trim().split('\n');
 
 function solution(n, m, start, graph) {
     const INF = Infinity;
@@ -111,17 +111,17 @@ function solution(n, m, start, graph) {
     dijkstra(start);
 
     for (let i = 1; i <= n; i++) {
-        if (distance[i] === INF) console.log("INFINITY");
+        if (distance[i] === INF) console.log('INFINITY');
         else console.log(distance[i]);
     }
 }
 
-let [n, m] = input[0].split(" ").map(Number);
+let [n, m] = input[0].split(' ').map(Number);
 let start = Number(input[1]);
 let graph = Array.from(Array(n + 1), () => []);
 input.splice(0, 2);
 input.forEach((e) => {
-    let [a, b, c] = e.split(" ").map(Number);
+    let [a, b, c] = e.split(' ').map(Number);
     graph[a].push([b, c]);
 });
 
