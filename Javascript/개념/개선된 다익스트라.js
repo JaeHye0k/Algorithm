@@ -118,7 +118,7 @@ function solution(n, m, start, graph) {
 
 let [n, m] = input[0].split(' ').map(Number);
 let start = Number(input[1]);
-let graph = Array.from(Array(n + 1), () => []);
+let graph = Array.from({ length: n + 1 }, () => []);
 input.splice(0, 2);
 input.forEach((e) => {
     let [a, b, c] = e.split(' ').map(Number);
