@@ -8,7 +8,6 @@ class Heap {
     getLeftChildIndex = (parentIndex) => parentIndex * 2 + 1;
     getRightChildIndex = (parentIndex) => parentIndex * 2 + 2;
     getParentIndex = (childIndex) => Math.floor((childIndex - 1) / 2);
-    peek = () => this.heap[0]; // 루트 노드
 
     // 2. 삽입
     insert = (key, value) => {
@@ -24,7 +23,7 @@ class Heap {
         while (index > 0) {
             const parentIndex = this.getParentIndex(index);
             // 부모 노드의 key 값이 마지막에 삽입된 노드의 key 값보다 크다면 부모 노드를 아래로 내려준다.
-            if (this.heap[parentIndex].key > lastInsertedNode.key) {
+            if (this.heap[parentIndex].key > this.heap[index].key) {
                 this.heap[index] = this.heap[parentIndex];
                 index = parentIndex;
             } else break;
@@ -62,8 +61,7 @@ class Heap {
             const smallerChildIndex = rightChildIndex < count && this.heap[rightChildIndex].key < this.heap[leftChildIndex].key ? rightChildIndex : leftChildIndex;
 
             // 자식의 key 값이 루트 노드의 key 값보다 작다면 위로 끌어올린다.
-            // key 값이 같은 경우도 포함하는 이유는 index = smallerChildIndex 를 수행해주기 위해서.
-            if (this.heap[smallerChildIndex].key <= rootNode.key) {
+            if (this.heap[smallerChildIndex].key < this.heap[index].key) {
                 this.heap[index] = this.heap[smallerChildIndex];
                 index = smallerChildIndex;
             } else break;
@@ -81,10 +79,6 @@ class PriorityQueue extends Heap {
     dequeue = () => this.remove();
     size = () => this.heap.length;
 }
-
-const fs = require('fs');
-const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
-const input = fs.readFileSync(filePath).toString().trim().split('\n');
 
 function solution(n, m, start, graph) {
     const INF = Infinity;
@@ -116,13 +110,22 @@ function solution(n, m, start, graph) {
     }
 }
 
-let [n, m] = input[0].split(' ').map(Number);
-let start = Number(input[1]);
-let graph = Array.from({ length: n + 1 }, () => []);
-input.splice(0, 2);
-input.forEach((e) => {
-    let [a, b, c] = e.split(' ').map(Number);
-    graph[a].push([b, c]);
-});
+const [n, m] = [6, 11];
+const start = 1;
+const graph = Array.from({ length: n + 1 }, () => []);
+const input = [
+    [1, 2, 2],
+    [1, 3, 5],
+    [1, 4, 1],
+    [2, 3, 3],
+    [2, 4, 2],
+    [3, 2, 3],
+    [3, 6, 5],
+    [4, 3, 3],
+    [4, 5, 1],
+    [5, 3, 1],
+    [5, 6, 2],
+];
+input.forEach(([a, b, c]) => graph[a].push([b, c]));
 
 solution(n, m, start, graph);
