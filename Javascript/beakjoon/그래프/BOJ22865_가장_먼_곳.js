@@ -72,8 +72,8 @@ function dijkstra(start, distance) {
     while (pq.getSize()) {
         const [dist, cur] = Object.values(pq.dequeue());
         if (dist > distance[cur]) continue;
-        for (let [v, c] of graph[cur]) {
-            const cost = dist + c;
+        for (let [v, d] of graph[cur]) {
+            const cost = dist + d;
             if (cost < distance[v]) {
                 distance[v] = cost;
                 pq.enqueue(cost, v);
