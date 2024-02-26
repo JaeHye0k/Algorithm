@@ -38,8 +38,13 @@ function dfsConnect(cur) {
 
 function dfsDepth(depth, cur) {
     if (depth > answer) {
+<<<<<<< HEAD
         answer = depth; // 가장 깊은 노드의 깊이
         start = cur; // 가장 깊은 노드의 번호
+=======
+        answer = depth;
+        start = cur;
+>>>>>>> b9544554d8181f7b396610cbff015058495703e1
     }
     for (let next of graph[cur]) {
         if (!visited[next]) {
