@@ -1,50 +1,104 @@
-const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
-const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
-const N = +input[0];
-const circles = input.slice(1, -1).map((e) => e.split(' ').map(Number));
-const [A, B] = input.at(-1).split(' ').map(Number);
-circles.sort((a, b) => b[2] - a[2]);
-circles.unshift([0, 0, Infinity]);
-const graph = Array.from({ length: N + 1 }, () => []);
-const visited = Array(N + 1).fill(false);
-dfsConnect(0);
-// 트리 만들기
-function dfsConnect(cur) {
-    const [num1, x1, r1] = circles[cur];
-    for (let i = cur + 1; i <= N; i++) {
-        if (!visited[i]) {
-            const [num2, x2, r2] = circles[i];
-            const d = Math.abs(x1 - x2);
-            // 포함 관계라면
-            if (d < Math.abs(r1 - r2)) {
-                visited[i] = true;
-                graph[num1].push(num2);
-                graph[num2].push(num1);
-                dfsConnect(i);
-            }
+class PriorityQueue {
+    constructor() {
+        this.heap = [];
+    }
+    getSize = () => this.heap.length;
+    getLCIdx = (pIdx) => pIdx * 2 + 1;
+    getRCIdx = (pIdx) => pIdx * 2 + 2;
+    getPIdx = (cIdx) => Math.floor((cIdx - 1) / 2);
+
+    insert(key, value) {
+        const node = { key, value };
+        this.heap.push(node);
+        this.heapifyUp();
+    }
+    heapifyUp() {
+        let idx = this.heap.length - 1;
+        const lastInsertedNode = this.heap[idx];
+
+        while (idx > 0) {
+            const pIdx = this.getPIdx(idx);
+            if (this.heap[pIdx].key > this.heap[idx].key) {
+                this.heap[idx] = this.heap[pIdx];
+                idx = pIdx;
+            } else break;
         }
+        this.heap[idx] = lastInsertedNode;
+    }
+    remove() {
+        const len = this.heap.length;
+        const rootNode = this.heap[0];
+
+        if (len === 0) return undefined;
+        if (len === 1) this.heap = [];
+        else {
+            this.heap[0] = this.heap.pop();
+            this.heapifyDown();
+        }
+        return rootNode;
+    }
+    heapifyDown() {
+        let idx = 0;
+        const len = this.heap.length;
+        const rootNode = this.heap[0];
+
+        while (this.getLCIdx(idx) < len) {
+            const lcIdx = this.getLCIdx(idx);
+            const rcIdx = this.getRCIdx(idx);
+            const smallerIdx = rcIdx < len && this.heap[rcIdx].key < this.heap[lcIdx].key ? rcIdx : lcIdx;
+
+            if (this.heap[smallerIdx].key < this.heap[idx].key) {
+                this.heap[idx] = this.heap[smallerIdx];
+                idx = smallerIdx;
+            } else break;
+        }
+        this.heap[idx] = rootNode;
     }
 }
-visited.fill(false);
-let answerDepth = 0;
-let answerPath = [];
-dfs(A, 1, [A]);
-function dfs(cur, depth, path) {
-    if (graph[cur].includes(B)) {
-        path.push(B);
-        answerPath = JSON.parse(JSON.stringify(path));
-        answerDepth = depth + 1;
+
+function dfs(depth, cur) {
+    if (cur === B) {
+        console.log(depth);
+        console.log(path.join(' '));
         return;
     }
     for (let next of graph[cur]) {
         if (!visited[next]) {
             visited[next] = true;
             path.push(next);
-            dfs(next, depth + 1, path);
-            visited[next] = false;
+            dfs(depth + 1, next);
             path.pop();
+            visited[next] = false;
         }
     }
 }
-console.log(answerDepth);
-console.log(answerPath.join(' '));
+
+const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
+const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
+const N = +input[0];
+const circles = input.slice(1, -1).map((e) => e.split(' ').map(Number));
+const [A, B] = input.at(-1).split(' ').map(Number);
+const pq = new PriorityQueue();
+circles.sort((a, b) => b[2] - a[2]);
+// 괄호쌍 판별
+for (let [num, x, r] of circles) {
+    pq.insert(x - r, num);
+    pq.insert(x + r, -num);
+}
+
+const graph = Array.from({ length: N + 1 }, () => []);
+const stack = [0]; // 좌표 평면의 원점 x축
+while (pq.getSize()) {
+    const [x, num] = Object.values(pq.remove());
+    if (num < 0) stack.pop();
+    else {
+        graph[num].push(stack.at(-1));
+        graph[stack.at(-1)].push(num);
+        stack.push(num);
+    }
+}
+
+const visited = Array(N + 1).fill(false);
+visited[A] = true;
+const path = [A];
+dfs(1, A);
