@@ -1,3 +1,8 @@
+const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
+const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
+const N = +input[0];
+const circles = input.slice(1, -1).map((e) => e.split(' ').map(Number));
+const [A, B] = input.at(-1).split(' ').map(Number);
 class PriorityQueue {
     constructor() {
         this.heap = [];
@@ -59,7 +64,7 @@ class PriorityQueue {
 function dfs(depth, cur) {
     if (cur === B) {
         console.log(depth);
-        console.log(path.join(' '));
+        console.log(...path);
         return;
     }
     for (let next of graph[cur]) {
@@ -72,12 +77,6 @@ function dfs(depth, cur) {
         }
     }
 }
-
-const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
-const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
-const N = +input[0];
-const circles = input.slice(1, -1).map((e) => e.split(' ').map(Number));
-const [A, B] = input.at(-1).split(' ').map(Number);
 const pq = new PriorityQueue();
 circles.sort((a, b) => b[2] - a[2]);
 // 괄호쌍 판별
@@ -90,7 +89,7 @@ const graph = Array.from({ length: N + 1 }, () => []);
 const stack = [0]; // 좌표 평면의 원점 x축
 while (pq.getSize()) {
     const [x, num] = Object.values(pq.remove());
-    if (num < 0) stack.pop();
+    if (num <= 0) stack.pop();
     else {
         graph[num].push(stack.at(-1));
         graph[stack.at(-1)].push(num);
