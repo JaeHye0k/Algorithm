@@ -8,12 +8,14 @@ circles.unshift([0, 0, Infinity]);
 const graph = Array.from({ length: N + 1 }, () => []);
 const visited = Array(N + 1).fill(false);
 dfsConnect(0);
+// 트리 만들기
 function dfsConnect(cur) {
     const [num1, x1, r1] = circles[cur];
     for (let i = cur + 1; i <= N; i++) {
         if (!visited[i]) {
             const [num2, x2, r2] = circles[i];
             const d = Math.abs(x1 - x2);
+            // 포함 관계라면
             if (d < Math.abs(r1 - r2)) {
                 visited[i] = true;
                 graph[num1].push(num2);
