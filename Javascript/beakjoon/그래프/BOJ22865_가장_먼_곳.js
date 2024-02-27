@@ -26,29 +26,28 @@ class PriorityQueue {
     }
     heapifyUp() {
         let idx = this.heap.length - 1;
-        const lastInsertedNode = this.heap[idx];
 
         while (idx > 0) {
             const pIdx = this.getPIdx(idx);
             if (this.heap[pIdx].key > this.heap[idx].key) {
-                this.heap[idx] = this.heap[pIdx];
+                [this.heap[pIdx], this.heap[idx]] = [this.heap[idx], this.heap[pIdx]];
                 idx = pIdx;
             } else break;
         }
-        this.heap[idx] = lastInsertedNode;
     }
     dequeue() {
         const rootNode = this.heap[0];
         const count = this.heap.length;
 
-        if (count === 0) return undefined;
-        if (count === 1) this.heap = [];
-        else this.heapifyDown();
+        if (count === 0) return null;
+        if (count === 1) return this.heap.pop();
+        else {
+            this.heap[0] = this.heap.pop();
+            this.heapifyDown();
+        }
         return rootNode;
     }
     heapifyDown() {
-        this.heap[0] = this.heap.pop();
-        const rootNode = this.heap[0];
         const count = this.heap.length;
         let idx = 0;
 
@@ -57,11 +56,10 @@ class PriorityQueue {
             const rcIdx = this.getRCIdx(idx);
             const smallerCIdx = rcIdx < count && this.heap[rcIdx].key < this.heap[lcIdx].key ? rcIdx : lcIdx;
             if (this.heap[smallerCIdx] < this.heap[idx]) {
-                this.heap[idx] = this.heap[smallerCIdx];
+                [this.heap[smallerCIdx], this.heap[idx]] = [this.heap[idx], this.heap[smallerCIdx]];
                 idx = smallerCIdx;
             } else break;
         }
-        this.heap[idx] = rootNode;
     }
 }
 
