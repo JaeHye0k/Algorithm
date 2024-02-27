@@ -17,7 +17,7 @@ class PriorityQueue {
     getSize = () => this.heap.length;
     getLCIdx = (pIdx) => pIdx * 2 + 1;
     getRCIdx = (pIdx) => pIdx * 2 + 2;
-    getPIdx = (cIdx) => Math.floor((cIdx - 1) / 2);
+    getPIdx = (cIdx) => (cIdx - 1) >> 1;
 
     enqueue(key, value) {
         const node = { key, value };
