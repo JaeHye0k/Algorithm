@@ -17,7 +17,7 @@ queue.sort((a, b) => a[0] - b[0]);
 
 while (queue.length > front) {
     const [x, num] = queue[front++];
-    if (num <= 0) stack.pop();
+    if (num < 0) stack.pop();
     else {
         tree[num].push(stack.at(-1));
         tree[stack.at(-1)].push(num);
