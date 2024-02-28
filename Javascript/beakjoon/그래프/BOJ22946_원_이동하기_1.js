@@ -2,18 +2,22 @@ const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/inp
 const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
 const N = +input[0];
 const circles = input.slice(1).map((e) => e.split(' ').map(Number));
+circles.push([0, 0, Infinity]); // 좌표 평면
 circles.sort((a, b) => b[2] - a[2]);
-circles.unshift([0, 0, Infinity]); // 좌표평면도 원으로 치니까
-const graph = Array.from({ length: N + 1 }, () => []);
+const tree = Array.from({ length: N + 1 }, () => []);
 const visited = Array(N + 1).fill(false);
-dfsConnect(0);
 let answer = 0;
 let start = 0;
+
+dfsConnect(0); // 트리 형성
+
 visited.fill(false);
 visited[0] = true;
-dfsDepth(0, 0);
+dfsDepth(0, 0); // 가장 깊은 노드 찾기
+
 visited.fill(false);
-dfsDepth(0, start);
+dfsDepth(0, start); // 가장 깊은 노드에서 가장 먼 노드 찾기
+
 console.log(answer);
 
 // 부모-자식 연결
@@ -26,9 +30,9 @@ function dfsConnect(cur) {
             const powY = Math.pow(y1 - y2, 2);
             const d = Math.sqrt(powX + powY);
             // 포함관계라면
-            if (Math.abs(r1 - r2) > d) {
-                graph[cur].push(i);
-                graph[i].push(cur); // 부모노드를 통해 지나가야 되기 때문에 양방향으로 연결
+            if (d < r1) {
+                tree[cur].push(i);
+                tree[i].push(cur);
                 visited[i] = true;
                 dfsConnect(i);
             }
@@ -41,7 +45,7 @@ function dfsDepth(depth, cur) {
         answer = depth; // 가장 깊은 노드의 깊이
         start = cur; // 가장 깊은 노드의 번호
     }
-    for (let next of graph[cur]) {
+    for (let next of tree[cur]) {
         if (!visited[next]) {
             visited[next] = true;
             dfsDepth(depth + 1, next);
