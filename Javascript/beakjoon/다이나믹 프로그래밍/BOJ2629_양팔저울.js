@@ -6,13 +6,11 @@ weights.unshift(0);
 const M = +input[2];
 const marbles = input[3].split(' ').map(Number);
 
-const dp = [];
 // 모든 추의 합
 const max = weights.reduce((acc, cur) => (acc += cur), 0);
 // 구슬이 0인 경우, 추의 개수가 0개인 경우를 고려하여 가로, 세로 1칸씩 더 늘려줌
-for (let i = 0; i <= N; i++) {
-    dp.push(Array.from({ length: max + 1 }, () => 'N'));
-}
+const dp = Array.from({ length: N + 1 }, () => Array(maxWeight + 1).fill('N'));
+
 // i = 추, j = 구슬
 for (let i = 1; i <= N; i++) {
     for (let j = 1; j <= max; j++) {
