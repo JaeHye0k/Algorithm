@@ -14,10 +14,10 @@ const dp = Array.from({ length: N + 1 }, () => Array(maxWeight + 1).fill('N'));
 // i = 추, j = 구슬
 for (let i = 1; i <= N; i++) {
     for (let j = 1; j <= max; j++) {
-        // 추를 안올려도 무게가 일치하는 경우
-        if (dp[i - 1][j] === 'Y') dp[i][j] = 'Y';
         // 추의 무게와 구슬의 무게가 딱 일치하는 경우
-        else if (weights[i] === j) dp[i][j] = 'Y';
+        if (weights[i] === j) dp[i][j] = 'Y';
+        // 추를 안올려도 무게가 일치하는 경우
+        else if (dp[i - 1][j] === 'Y') dp[i][j] = 'Y';
         // 추를 구슬쪽 저울에 올려놓았을 때 무게가 일치하는 경우
         else if (dp[i - 1][Math.abs(weights[i] - j)] === 'Y') dp[i][j] = 'Y';
         else if (dp[i - 1][weights[i] + j] === 'Y') dp[i][j] = 'Y';
