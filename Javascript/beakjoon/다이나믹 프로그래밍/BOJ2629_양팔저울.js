@@ -2,30 +2,31 @@ const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/inp
 const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
 const N = +input[0];
 const weights = input[1].split(' ').map(Number);
-weights.unshift(0);
 const M = +input[2];
 const marbles = input[3].split(' ').map(Number);
 
 // 모든 추의 합
-const max = weights.reduce((acc, cur) => (acc += cur), 0);
-// 구슬이 0인 경우, 추의 개수가 0개인 경우를 고려하여 가로, 세로 1칸씩 더 늘려줌
-const dp = Array.from({ length: N + 1 }, () => Array(maxWeight + 1).fill('N'));
+const maxWeight = weights.reduce((acc, cur) => (acc += cur), 0);
+const dp = [Array(maxWeight + 1).fill('N')];
+dp[0][weights[0]] = 'Y';
 
 // i = 추, j = 구슬
-for (let i = 1; i <= N; i++) {
-    for (let j = 1; j <= max; j++) {
-        // 추의 무게와 구슬의 무게가 딱 일치하는 경우
-        if (weights[i] === j) dp[i][j] = 'Y';
-        // 추를 안올려도 무게가 일치하는 경우
-        else if (dp[i - 1][j] === 'Y') dp[i][j] = 'Y';
-        // 추를 구슬쪽 저울에 올려놓았을 때 무게가 일치하는 경우
-        else if (dp[i - 1][Math.abs(weights[i] - j)] === 'Y') dp[i][j] = 'Y';
-        else if (dp[i - 1][weights[i] + j] === 'Y') dp[i][j] = 'Y';
+for (let i = 1; i < N; i++) {
+    // 이전 단계 dp 테이블 복사
+    dp.push(JSON.parse(JSON.stringify(dp[i - 1])));
+    // 현재 추의 무게에 해당하는 곳 'Y'로 변경
+    dp[i][weights[i]] = 'Y';
+    for (let j = 1; j <= maxWeight; j++) {
+        if (dp[i - 1][j] === 'Y') {
+            dp[i][j + weights[i]] = 'Y';
+            dp[i][Math.abs(j - weights[i])] = 'Y';
+        }
     }
 }
+
 const answer = [];
 for (let marble of marbles) {
-    if (marble > max) answer.push('N');
-    else answer.push(dp[N][marble]);
+    if (marble > maxWeight) answer.push('N');
+    else answer.push(dp[N - 1][marble]);
 }
 console.log(...answer);
