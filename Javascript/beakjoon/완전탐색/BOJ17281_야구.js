@@ -31,29 +31,31 @@ function play(battingOrderList) {
     for (let i = 0; i < N; i++) {
         const inning = arr[i];
         let out = 0;
-        let base = [0, 0, 0];
+        let base1 = 0;
+        let base2 = 0;
+        let base3 = 0;
 
         while (out < 3) {
             const result = inning[battingOrderList[order++ % 9]];
 
             if (result === 0) out++;
             else if (result === 1) {
-                score += base[2];
-                base[2] = base[1];
-                base[1] = base[0];
-                base[0] = 1;
+                score += base3;
+                base3 = base2;
+                base2 = base1;
+                base1 = 1;
             } else if (result === 2) {
-                score += base[2] + base[1];
-                base[2] = base[0];
-                base[1] = 1;
-                base[0] = 0;
+                score += base3 + base2;
+                base3 = base1;
+                base2 = 1;
+                base1 = 0;
             } else if (result === 3) {
-                score += base[2] + base[1] + base[0];
-                base[2] = 1;
-                base[1] = base[0] = 0;
+                score += base3 + base2 + base1;
+                base3 = 1;
+                base2 = base1 = 0;
             } else if (result === 4) {
-                score += base[2] + base[1] + base[0] + 1;
-                base[2] = base[1] = base[0] = 0;
+                score += base3 + base2 + base1 + 1;
+                base3 = base2 = base1 = 0;
             }
         }
     }
