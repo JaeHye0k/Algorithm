@@ -41,8 +41,8 @@ class PriorityQueue {
 
     heapifyDown(index) {
         while (index < this.heap.length) {
-            const left = 2 * index + 1;
-            const right = 2 * index + 2;
+            const left = (index << 1) + 1;
+            const right = (index << 1) + 2;
             let smallest = index;
             if (left < this.heap.length && this.heap[left].priority < this.heap[smallest].priority) {
                 smallest = left;
