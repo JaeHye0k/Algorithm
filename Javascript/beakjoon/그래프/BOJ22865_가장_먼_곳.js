@@ -14,82 +14,87 @@ class PriorityQueue {
     constructor() {
         this.heap = [];
     }
-    getSize = () => this.heap.length;
-    getLCIdx = (pIdx) => pIdx * 2 + 1;
-    getRCIdx = (pIdx) => pIdx * 2 + 2;
-    getPIdx = (cIdx) => (cIdx - 1) >> 1;
 
-    enqueue(key, value) {
-        const node = { key, value };
-        this.heap.push(node);
-        this.heapifyUp();
+    enqueue(node, priority) {
+        this.heap.push({ node, priority });
+        this.heapifyUp(this.heap.length - 1);
     }
-    heapifyUp() {
-        let idx = this.heap.length - 1;
 
-        while (idx > 0) {
-            const pIdx = this.getPIdx(idx);
-            if (this.heap[pIdx].key > this.heap[idx].key) {
-                [this.heap[pIdx], this.heap[idx]] = [this.heap[idx], this.heap[pIdx]];
-                idx = pIdx;
-            } else break;
+    heapifyUp(index) {
+        while (index > 0) {
+            const parentIndex = (index - 1) >> 1;
+            if (this.heap[parentIndex].priority <= this.heap[index].priority) break;
+            [this.heap[parentIndex], this.heap[index]] = [this.heap[index], this.heap[parentIndex]];
+            index = parentIndex;
         }
     }
+
     dequeue() {
-        const rootNode = this.heap[0];
-        const count = this.heap.length;
-
-        if (count === 0) return null;
-        if (count === 1) return this.heap.pop();
-        else {
-            this.heap[0] = this.heap.pop();
-            this.heapifyDown();
+        const min = this.heap[0];
+        const end = this.heap.pop();
+        if (this.heap.length > 0) {
+            this.heap[0] = end;
+            this.heapifyDown(0);
         }
-        return rootNode;
+        return min;
     }
-    heapifyDown() {
-        const count = this.heap.length;
-        let idx = 0;
 
-        while (this.getLCIdx(idx) < count) {
-            const lcIdx = this.getLCIdx(idx);
-            const rcIdx = this.getRCIdx(idx);
-            const smallerCIdx = rcIdx < count && this.heap[rcIdx].key < this.heap[lcIdx].key ? rcIdx : lcIdx;
-            if (this.heap[smallerCIdx] < this.heap[idx]) {
-                [this.heap[smallerCIdx], this.heap[idx]] = [this.heap[idx], this.heap[smallerCIdx]];
-                idx = smallerCIdx;
-            } else break;
+    heapifyDown(index) {
+        while (index < this.heap.length) {
+            const left = 2 * index + 1;
+            const right = 2 * index + 2;
+            let smallest = index;
+            if (left < this.heap.length && this.heap[left].priority < this.heap[smallest].priority) {
+                smallest = left;
+            }
+            if (right < this.heap.length && this.heap[right].priority < this.heap[smallest].priority) {
+                smallest = right;
+            }
+            if (smallest === index) break;
+            [this.heap[index], this.heap[smallest]] = [this.heap[smallest], this.heap[index]];
+            index = smallest;
         }
+    }
+
+    isEmpty() {
+        return this.heap.length === 0;
     }
 }
 
-function dijkstra(start, distance) {
+function dijkstra(start) {
+    const distance = Array(N + 1).fill(INF);
     distance[start] = 0;
     const pq = new PriorityQueue();
-    pq.enqueue(0, start);
-    while (pq.getSize()) {
-        const [dist, cur] = Object.values(pq.dequeue());
-        if (dist > distance[cur]) continue;
-        for (let [v, d] of graph[cur]) {
-            const cost = dist + d;
+    pq.enqueue(start, 0);
+    while (!pq.isEmpty()) {
+        const { node, priority } = pq.dequeue();
+        if (priority > distance[node]) continue;
+        for (let [v, d] of graph[node]) {
+            const cost = priority + d;
             if (cost < distance[v]) {
                 distance[v] = cost;
-                pq.enqueue(cost, v);
+                pq.enqueue(v, cost);
             }
         }
     }
+    return distance;
 }
 
 const INF = Infinity;
-const totalDist = Array(N + 1).fill(INF);
-for (let point of [A, B, C]) {
-    const distance = Array(N + 1).fill(INF);
-    dijkstra(point, distance);
-    for (let i = 1; i <= N; i++) {
-        totalDist[i] = Math.min(totalDist[i], distance[i]);
+
+const distA = dijkstra(A);
+const distB = dijkstra(B);
+const distC = dijkstra(C);
+
+let furthest = 0;
+let answer = 0;
+
+for (let i = 1; i <= N; i++) {
+    const minDist = Math.min(distA[i], distB[i], distC[i]);
+    if (furthest < minDist) {
+        furthest = minDist;
+        answer = i;
     }
 }
-totalDist.shift();
-const maxDist = Math.max(...totalDist);
-const answer = totalDist.findIndex((d) => d === maxDist);
-console.log(answer + 1);
+
+console.log(answer);
