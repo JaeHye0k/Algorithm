@@ -3,6 +3,7 @@ const input = require('fs').readFileSync(filePath).toString().trim().split('\n')
 const N = +input[0];
 const [A, B, C] = input[1].split(' ').map(Number);
 const M = +input[2];
+const INF = Infinity;
 const road = input.slice(3).map((e) => e.split(' ').map(Number));
 const graph = Array.from({ length: N + 1 }, () => []);
 road.forEach(([s, e, v]) => {
@@ -79,8 +80,6 @@ function dijkstra(start) {
     }
     return distance;
 }
-
-const INF = Infinity;
 
 const distA = dijkstra(A);
 const distB = dijkstra(B);
