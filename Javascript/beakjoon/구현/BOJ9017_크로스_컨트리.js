@@ -15,43 +15,49 @@ for (let i = 0; i < T; i++) {
 }
 
 function solution(N, players) {
-    // 팀 종류
-    let teams = new Set(players);
-    // 팀별 주자 수
-    let teamObj = {};
+    //팀별 주자 수 구하기
+    const teams = new Set(players);
+    const teamObj = {};
     [...teams].forEach((e) => (teamObj[e] = 0));
-    // 팀별 주자 수 구하기
     players.forEach((e) => (teamObj[e] += 1));
 
-    // 주자가 6명이 안되는 팀은 제외하기
-    players = players.filter((e) => teamObj[e] >= 6);
-    teams = new Set(players);
-    teamObj = {};
-    [...teams].forEach((e) => (teamObj[e] = []));
-    // 팀별 점수
-    players.forEach((e, i) => {
-        if (teamObj[e].length < 5) {
-            teamObj[e].push(i + 1);
-        }
-    });
-    const scoreObj = {};
-    for (let i in teamObj) {
-        const scoreToFour = teamObj[i].slice(0, 4).reduce((acc, cur) => (acc += cur), 0);
-        const scoreToFive = teamObj[i].slice(0, 5).reduce((acc, cur) => (acc += cur), 0);
-        scoreObj[i] = [scoreToFour, scoreToFive];
-    }
-    const scoreArr = Object.entries(scoreObj);
-    let score = scoreArr[0][1]; // 점수 합
-    let answer = scoreArr[0][0]; // 팀 번호
-    for (let i = 1; i < scoreArr.length; i++) {
-        if (score[0] > scoreArr[i][1][0]) {
-            score = scoreArr[i][1];
-            answer = scoreArr[i][0];
-        } else if (score[0] === scoreArr[i][1][0]) {
-            score = score[1] < scoreArr[i][1][1] ? score : scoreArr[i][1];
-            answer = score[1] < scoreArr[i][1][1] ? answer : scoreArr[i][0];
-        }
+    // 주자가 6명이 되지 않는 팀 제외
+    for (let teamNum in teamObj) {
+        if (teamObj[teamNum] < 6) delete teamObj[teamNum];
     }
 
+    // 팀별 각 주자의 점수 구하기
+    const scoreObj = {};
+    let score = 1;
+    players.forEach((num) => {
+        if (teamObj.hasOwnProperty(num)) {
+            if (scoreObj[num]) scoreObj[num].push(score++);
+            else {
+                scoreObj[num] = [];
+                scoreObj[num].push(score++);
+            }
+        }
+    });
+
+    // 팀별 4등까지의 점수의 합, 5등까지의 점수의 합 구하기
+    for (let teamNum in scoreObj) {
+        const scoreToFour = scoreObj[teamNum].slice(0, 4).reduce((acc, cur) => (acc += cur), 0);
+        const scoreToFive = scoreObj[teamNum].slice(0, 5).reduce((acc, cur) => (acc += cur), 0);
+        scoreObj[teamNum] = [scoreToFour, scoreToFive];
+    }
+
+    // 점수가 제일 작은 팀 구하기
+    const teamNums = Object.keys(teamObj);
+    let minScore = scoreObj[teamNums[0]];
+    let answer = teamNums[0];
+    for (let i = 1; i < teamNums.length; i++) {
+        if (minScore[0] === scoreObj[teamNums[i]][0]) {
+            minScore = minScore[1] < scoreObj[teamNums[i]][1] ? minScore : scoreObj[teamNums[i]];
+            answer = minScore[1] < scoreObj[teamNums[i]][1] ? answer : teamNums[i];
+        } else {
+            minScore = minScore[0] < scoreObj[teamNums[i]][0] ? minScore : scoreObj[teamNums[i]];
+            answer = minScore[0] < scoreObj[teamNums[i]][0] ? answer : teamNums[i];
+        }
+    }
     console.log(answer);
 }
