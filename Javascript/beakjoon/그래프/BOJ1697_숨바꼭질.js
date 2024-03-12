@@ -1,55 +1,51 @@
+// DP
 const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
 const [N, K] = require('fs').readFileSync(filePath).toString().trim().split(' ').map(Number);
-const visited = Array(10 ** 6).fill(false);
-let answer = 0;
+const dp = Array(10 ** 6).fill(Infinity);
 
-class Queue {
-    constructor() {
-        this.storage = {};
-        this.front = 0;
-        this.rear = 0;
-    }
-    size() {
-        if (this.storage[this.rear] === undefined) return 0;
-        else return this.rear - this.front + 1;
-    }
-    enqueue(value) {
-        if (this.size() === 0) {
-            this.storage['0'] = value;
-        } else {
-            this.rear += 1;
-            this.storage[this.rear] = value;
-        }
-    }
-    dequeue() {
-        let temp = this.storage[this.front];
-        delete this.storage[this.front];
+// N이 더 클 경우 -1 연산만 수행해야 갈 수 있음
+if (N >= K) {
+    console.log(N - K);
+    process.exit(0);
+}
+for (let i = 0; i < N; i++) {
+    dp[i] = N - i;
+}
 
-        if (this.front === this.rear) {
-            this.front = 0;
-            this.rear = 0;
-        } else {
-            this.front += 1;
-        }
-        return temp;
+dp[N] = 0;
+
+for (let i = N + 1; i <= K; i++) {
+    if (i % 2 === 0) {
+        dp[i] = Math.min(dp[i >> 1], dp[i - 1]) + 1;
+    } else {
+        dp[i] = Math.min(dp[i - 1] + 1, dp[(i + 1) >> 1] + 2);
     }
 }
-const queue = new Queue();
-queue.enqueue([N, 0]);
-visited[N] = true;
 
-while (queue.size()) {
-    const [cur, sec] = queue.dequeue();
-    if (cur > 100000) continue;
-    if (cur === K) {
-        answer = sec;
-        break;
-    }
-    for (let next of [cur - 1, cur + 1, cur * 2]) {
-        if (!visited[next] && 0 <= next && next <= 100000) {
-            visited[next] = true;
-            queue.enqueue([next, sec + 1]);
-        }
-    }
-}
-console.log(answer);
+console.log(dp[K]);
+
+// BFS
+// const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
+// const [N, K] = require('fs').readFileSync(filePath).toString().trim().split(' ').map(Number);
+// const visited = Array(10 ** 6).fill(false);
+// let answer = 0;
+
+// const queue = [[N, 0]];
+// let front = 0;
+// visited[N] = true;
+
+// while (queue.length > front) {
+//     const [cur, sec] = queue[front++];
+//     if (cur > 100000) continue;
+//     if (cur === K) {
+//         answer = sec;
+//         break;
+//     }
+//     for (let next of [cur - 1, cur + 1, cur * 2]) {
+//         if (!visited[next] && 0 <= next && next <= 100000) {
+//             visited[next] = true;
+//             queue.push([next, sec + 1]);
+//         }
+//     }
+// }
+// console.log(answer);
