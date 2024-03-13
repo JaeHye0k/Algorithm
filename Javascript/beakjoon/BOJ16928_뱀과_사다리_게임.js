@@ -6,9 +6,11 @@ const snake = input.slice(N + 1).map((e) => e.split(' ').map(Number));
 const visited = Array(101).fill(false);
 const graph = Array(101).fill(0);
 
+// 사다리
 for (let [x, y] of ladder) {
     graph[x] = y;
 }
+// 뱀
 for (let [u, v] of snake) {
     graph[u] = v;
 }
@@ -27,7 +29,7 @@ function bfs(start, count) {
             if (next === 100) return distance + 1;
             else if (next < 100) {
                 // 사다리 혹은 뱀일 경우 해당 위치로 이동 (카운트는 증가하지 않음)
-                while (graph[next] !== 0) {
+                if (graph[next] !== 0) {
                     next = graph[next];
                 }
                 if (!visited[next]) {
