@@ -6,7 +6,7 @@ let answer = Array(N + 1).fill(0);
 
 for (let i = 1; i <= N; i++) {
     let rightMax = -Infinity;
-    let leftMax = Infinity;
+    let leftMin = Infinity;
     const x1 = i;
     const y1 = buildings[i];
     // 오른쪽 빌딩 탐색
@@ -26,9 +26,9 @@ for (let i = 1; i <= N; i++) {
         const x2 = j;
         const y2 = buildings[j];
         const incline = (y2 - y1) / (x2 - x1);
-        if (incline < leftMax) {
+        if (incline < leftMin) {
             answer[i]++;
-            leftMax = incline;
+            leftMin = incline;
         }
     }
 }

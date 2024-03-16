@@ -6,6 +6,7 @@ const dx = [-1, 1, 0, 0];
 const dy = [0, 0, -1, 1];
 const dp = Array.from({ length: M }, () => Array(N).fill(-1));
 console.log(dfs(0, 0));
+console.log(dp);
 
 function dfs(x, y) {
     // 도착 지점에 도달했을 경우 1(한 가지 경우의 수)리턴

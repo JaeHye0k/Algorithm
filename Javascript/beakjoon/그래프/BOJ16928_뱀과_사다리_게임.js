@@ -4,15 +4,15 @@ const [N, M] = input[0].split(' ').map(Number);
 const ladder = input.slice(1, N + 1).map((e) => e.split(' ').map(Number));
 const snake = input.slice(N + 1).map((e) => e.split(' ').map(Number));
 const visited = Array(101).fill(false);
-const graph = Array(101).fill(0);
+const arr = Array(101).fill(0);
 
 // 사다리
 for (let [x, y] of ladder) {
-    graph[x] = y;
+    arr[x] = y;
 }
 // 뱀
 for (let [u, v] of snake) {
-    graph[u] = v;
+    arr[u] = v;
 }
 
 let answer = bfs(1, 0);
@@ -23,17 +23,17 @@ function bfs(start, count) {
     let front = 0;
     visited[start] = true;
     while (queue.length > front) {
-        const [node, distance] = queue[front++];
+        const [v, diceCount] = queue[front++];
         for (let i = 1; i <= 6; i++) {
-            let next = node + i;
-            if (next === 100) return distance + 1;
+            let next = v + i;
+            if (next === 100) return diceCount + 1;
             else if (next < 100) {
                 // 사다리 혹은 뱀일 경우 해당 위치로 이동 (카운트는 증가하지 않음)
-                if (graph[next] !== 0) {
-                    next = graph[next];
+                if (arr[next] !== 0) {
+                    next = arr[next];
                 }
                 if (!visited[next]) {
-                    queue.push([next, distance + 1]);
+                    queue.push([next, diceCount + 1]);
                     visited[next] = true;
                 }
             }
