@@ -3,51 +3,39 @@ const input = require('fs').readFileSync(filePath).toString().trim().split('\n')
 const [N, M] = input[0].split(' ').map(Number);
 const [peopleCount, ...peopleKnowTruth] = input[1].split(' ').map(Number);
 const party = input.slice(2).map((e) => e.split(' ').map(Number));
-const truth = new Set(peopleKnowTruth);
-let answer = 0;
+const parent = Array(N + 1);
+for (let i = 0; i <= N; i++) {
+    parent[i] = i;
+}
+let answer = M;
 
-// 첫 번째 파티에서 부터 마지막 파티까지 진실을 알고 있는 사람의 집합을 구한다.
+// 같은 파티에 있는 사람들의 번호끼리 집합으로 연결한다.
 for (let i = 0; i < M; i++) {
-    for (let j = 1; j <= party[i][0]; j++) {
-        if (truth.has(party[i][j])) {
-            party[i].slice(1).forEach((e) => truth.add(e));
-            break;
-        }
+    for (j = 1; j < party[i][0]; j++) {
+        union(party[i][j], party[i][j + 1]);
     }
 }
-// 마지막 파티에서 부터 첫번째 파티까지 진실을 알고 있는 사람의 집합을 구한다.
-for (let i = M - 1; i >= 0; i--) {
-    for (let j = 1; j <= party[i][0]; j++) {
-        if (truth.has(party[i][j])) {
-            party[i].slice(1).forEach((e) => truth.add(e));
-            break;
-        }
-    }
-}
-// 진실을 알고 있는 사람이 포함된 파티라면 카운트하지 않고, 포함되어있지 않다면 카운트한다.
+
+// 진실을 아는 사람이 파티에 포함되어 있을 경우 해당 파티에서는 거짓말을 하지 못하므로 카운트를 1 감소시킨다.
 for (let i = 0; i < M; i++) {
-    let known = false;
-    for (let j = 1; j <= party[i][0]; j++) {
-        if (truth.has(party[i][j])) {
-            known = true;
+    for (j = 0; j < peopleCount; j++) {
+        if (find(peopleKnowTruth[j]) === find(party[i][1])) {
+            answer--;
             break;
         }
     }
-    if (!known) answer++;
 }
+
 console.log(answer);
 
-// 반례
-// 6 5
-// 1 4
-// 2 1 2
-// 2 2 3
-// 2 3 4
-// 2 2 5
-// 2 5 6
+function union(a, b) {
+    a = find(a);
+    b = find(b);
+    if (a < b) parent[b] = a;
+    else parent[a] = b;
+}
 
-// ans
-// 0
-
-// wrong output
-// 1
+function find(x) {
+    if (parent[x] !== x) parent[x] = find(parent[x]);
+    return parent[x];
+}
