@@ -2,7 +2,8 @@ const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/inp
 const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
 const [N, M] = input[0].split(' ').map(Number);
 const laboratory = input.slice(1).map((e) => e.split(' ').map(Number));
-const visited = Array.from({ length: N }, () => Array(N).fill(false));
+const time = Array.from({ length: N }, () => Array(N).fill(-1));
+const selected = Array(10);
 const dx = [-1, 1, 0, 0];
 const dy = [0, 0, -1, 1];
 
@@ -11,83 +12,76 @@ const dy = [0, 0, -1, 1];
 // 1. 조합 구하기 (nCr) = (10Cm)
 // 2. m개의 조합 구했으면 해당 조합으로 BFS탐색하기
 
-let space = 0;
+// @ts-check
+
+/**
+ * @param {Array} time 특정 좌표까지 바이러스가 전파되기까지 걸린 시간을 저장할 테이블
+ * @param {Array} selected 조합을 만들기 위해 어떤 바이러스가 선택됐는지 나타냄
+ * @param {Number} emptyPlace 빈 칸의 수
+ * @param {Array} virus 바이러스가 있는 곳의 좌표를 담는 배열
+ */
+
+let emptyPlace = 0;
 let virus = [];
-let answer = [];
-let stack = [];
+let answer = Infinity;
 
 for (let i = 0; i < N; i++) {
     for (let j = 0; j < N; j++) {
-        if (laboratory[i][j] === 0) space++;
+        if (laboratory[i][j] === 0) emptyPlace++;
         else if (laboratory[i][j] === 2) {
-            virus.push([i, j]); // [x,y]
+            virus.push([i, j]); // 바이러스가 있는 곳의 좌표
         }
     }
 }
 
 combination(0, 0);
-let min = Math.min(...answer);
-console.log(answer);
-console.log(min === Infinity ? -1 : min);
+console.log(answer === Infinity ? -1 : answer);
 
+// M개의 활성 바이러스로 가능한 조합 모두 만들기
 function combination(cur, count) {
-    if (cur >= virus.length) return;
-
-    const [x, y] = virus[cur];
-
     if (count === M) {
-        const laboratoryCopy = JSON.parse(JSON.stringify(laboratory));
-        stack.forEach(([x, y]) => {
-            laboratoryCopy[x][y] = 'v';
+        let queue = [];
+        time.forEach((row) => {
+            row.fill(-1);
         });
-        laboratoryCopy.forEach((row, i) => {
-            row.forEach((col, j) => {
-                if (laboratoryCopy[i][j] === 1) laboratoryCopy[i][j] = '-';
-            });
-        });
-        const visitedCopy = JSON.parse(JSON.stringify(visited));
-        bfs([...stack], space, visitedCopy, laboratoryCopy);
+        for (let i = 0; i < virus.length; i++) {
+            if (selected[i]) {
+                queue.push(virus[i]);
+                time[virus[i][0]][virus[i][1]] = 0;
+            }
+        }
+        bfs(queue);
         return;
     }
     for (let i = cur; i < virus.length; i++) {
-        stack.push([...virus[i], 0]);
-        visited[x][y] = true;
+        if (selected[i]) continue;
+        selected[i] = true;
         combination(i + 1, count + 1);
-        stack.pop();
-        visited[x][y] = false;
+        selected[i] = false;
     }
 }
 
-function bfs(queue, space, visited, laboratory) {
+function bfs(queue) {
     let front = 0;
-    let maxSec = 0;
-    let preSec = 0;
+    let infectPlace = 0; // 바이러스가 퍼진 곳의 수
+    let totalTime = 0; // 모든 칸을 채우기 위해 걸리는 시간
     while (queue.length > front) {
-        let [x, y, curSec] = queue[front++];
-        maxSec = Math.max(curSec, preSec);
-        preSec = curSec;
+        let [x, y] = queue[front++];
 
         for (let i = 0; i < 4; i++) {
             const nx = x + dx[i];
             const ny = y + dy[i];
-            if (nx >= 0 && ny >= 0 && nx < N && ny < N && !visited[nx][ny] && laboratory[nx][ny] !== 1) {
+            if (nx >= 0 && ny >= 0 && nx < N && ny < N && time[nx][ny] === -1 && laboratory[nx][ny] !== 1) {
+                time[nx][ny] = time[x][y] + 1;
                 // 다음에 가야할 칸이 빈 칸이라면
                 if (laboratory[nx][ny] === 0) {
-                    queue.push([nx, ny, curSec + 1]);
-                    visited[nx][ny] = true;
-                    laboratory[nx][ny] = curSec + 1;
-                    space--;
+                    infectPlace++;
+                    totalTime = time[nx][ny];
                 }
-                // 다음에 가야할 칸에 비활성 바이러스가 있다면
-                else if (laboratory[nx][ny] === 2) {
-                    queue.push([nx, ny, curSec]);
-                    visited[nx][ny] = true;
-                    laboratory[nx][ny] = '*';
-                }
+                queue.push([nx, ny]);
             }
         }
     }
-    // 빈 공간이 존재한다면 -1
-    if (space > 0) maxSec = Infinity;
-    answer.push(maxSec);
+
+    if (infectPlace === emptyPlace) answer = Math.min(answer, totalTime);
 }
