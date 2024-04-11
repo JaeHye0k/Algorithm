@@ -8,11 +8,11 @@ const arr = input[1]
 let answer = 0;
 
 for (let i = 0; i < N; i++) {
-    answer += binarySearch(i);
+    answer += towPointer(i);
 }
 console.log(answer);
 
-function binarySearch(target) {
+function towPointer(target) {
     let left = 0;
     let right = N - 1;
     while (left < right) {
