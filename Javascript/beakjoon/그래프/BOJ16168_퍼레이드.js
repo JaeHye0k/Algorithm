@@ -3,7 +3,7 @@ const input = require('fs').readFileSync(filePath).toString().trim().split('\n')
 const [v, e] = input[0].split(' ').map(Number);
 const arr = input.slice(1).map((e) => e.split(' ').map(Number));
 const degree = Array(v + 1).fill(0);
-const parent = Array(v + 1).fill(-1);
+const parent = Array.from({ length: v + 1 }, (_, i) => i);
 arr.forEach(([s, e]) => {
     union(s, e);
     degree[s]++;
@@ -20,20 +20,22 @@ for (let i = 1; i <= v; i++) {
 let same = find(1);
 for (let i = 2; i <= v; i++) {
     // 하나의 컴포넌트로 연결되어있지 않다면
-    if (find(i) !== same) odd = 3;
+    if (find(i) !== same) {
+        console.log('NO');
+        process.exit();
+    }
 }
 
 if (odd === 2 || odd === 0) console.log('YES');
 else console.log('NO');
 
 function find(x) {
-    if (parent[x] < 0) return x;
-    return (parent[x] = find(parent[x]));
+    if (parent[x] !== x) parent[x] = find(parent[x]);
+    return parent[x];
 }
 
 function union(a, b) {
     a = find(a);
     b = find(b);
-    if (a === b) return;
     parent[b] = a;
 }
