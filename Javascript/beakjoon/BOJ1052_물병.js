@@ -21,10 +21,9 @@ if (bottles + remains.length <= K) {
 }
 
 for (let i = 0; i < remains.length - 1; i++) {
-    if (bottles + remains.length <= K)
-        if (remains[i] !== remains[i + 1]) {
-            recursion(i);
-        }
+    if (remains[i] !== remains[i + 1]) {
+        recursion(i);
+    }
     remains[i + 1] += remains[i];
     bottles++;
     if (remains.length - bottles <= K) break;
