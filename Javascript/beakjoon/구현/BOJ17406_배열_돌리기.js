@@ -7,61 +7,62 @@ const input = require('fs')
     .map((e) => e.split(' ').map(Number));
 const [N, M, K] = input[0];
 const arr = input.slice(1, N + 1);
-const copyArr = JSON.parse(JSON.stringify(arr));
 const operation = input.slice(N + 1);
 const visited = Array(K).fill(false);
 let answer = Infinity;
 
 // 순열을 통해 모든 회전에 대한 경우의 수 확인
-function permutation(cur, depth, copyArr) {
-    let copyArr2 = JSON.parse(JSON.stringify(copyArr));
-
-    let [r, c, s] = operation[cur];
-    let lt = [r - s - 1, c - s - 1]; // 왼쪽 위
-    let rb = [r + s - 1, c + s - 1]; // 오른쪽 아래
-    let rt = [lt[0], rb[1]]; // 오른쪽 위
-    let lb = [rb[0], lt[1]]; // 왼쪽 아래
-
-    // 회전 연산 수행
-    while (true) {
-        if (lt[0] > rb[0] || lt[1] > rb[1]) break;
-        copyArr2 = rotate(lt, rb, rt, lb, copyArr2);
-        lt[0]++;
-        lt[1]++;
-        rb[0]--;
-        rb[1]--;
-        rt = [lt[0], rb[1]];
-        lb = [rb[0], lt[1]];
+function permutation(nums, idx) {
+    if (idx === K) {
+        solution(nums);
+        return;
     }
-
-    // 하나의 순열을 다 탐색했을 경우
-    if (depth === K) answer = Math.min(answer, checkMin(copyArr2));
-
     for (let i = 0; i < K; i++) {
         if (!visited[i]) {
             visited[i] = true;
-            permutation(i, depth + 1, copyArr2);
+            nums[idx] = i;
+            permutation(nums, idx + 1);
             visited[i] = false;
         }
     }
 }
 
+function solution(nums) {
+    const copyArr = JSON.parse(JSON.stringify(arr));
+    for (let i = 0; i < K; i++) {
+        const r = operation[nums[i]][0] - 1;
+        const c = operation[nums[i]][1] - 1;
+        const s = operation[nums[i]][2];
+        rotate(copyArr, r, c, s);
+    }
+    answer = Math.min(answer, checkMin(copyArr));
+}
+
 // 회전
-function rotate(lt, rb, rt, lb, copyArr) {
-    const copyArr2 = JSON.parse(JSON.stringify(copyArr));
-    for (let i = lt[1] + 1; i <= rt[1]; i++) {
-        copyArr2[lt[0]][i] = copyArr[lt[0]][i - 1];
+function rotate(arr, r, c, s) {
+    if (s === 0) return;
+    let x = c - s;
+    let y = r - s;
+    let temp = arr[y][x];
+
+    while (true) {
+        arr[y][x] = arr[++y][x];
+        if (y === r + s) break;
     }
-    for (let i = rt[0] + 1; i <= rb[0]; i++) {
-        copyArr2[i][rt[1]] = copyArr[i - 1][rt[1]];
+    while (true) {
+        arr[y][x] = arr[y][++x];
+        if (x === c + s) break;
     }
-    for (let i = rb[1] - 1; i >= lb[1]; i--) {
-        copyArr2[rb[0]][i] = copyArr[rb[0]][i + 1];
+    while (true) {
+        arr[y][x] = arr[--y][x];
+        if (y === r - s) break;
     }
-    for (let i = lb[0] - 1; i >= lt[0]; i--) {
-        copyArr2[i][lb[1]] = copyArr[i + 1][lb[1]];
+    while (true) {
+        arr[y][x] = arr[y][--x];
+        if (x === c - s) break;
     }
-    return copyArr2;
+    arr[y][x + 1] = temp;
+    rotate(arr, r, c, s - 1);
 }
 
 function checkMin(arr) {
@@ -75,14 +76,7 @@ function checkMin(arr) {
     return min;
 }
 
-for (let i = 0; i < K; i++) {
-    if (!visited[i]) {
-        visited[i] = true;
-        permutation(i, 1, copyArr);
-        visited[i] = false;
-    }
-}
-
+permutation([], 0);
 console.log(answer);
 
 // 1. 모든 연산을 수행해보는 방법 (팩토리얼)
