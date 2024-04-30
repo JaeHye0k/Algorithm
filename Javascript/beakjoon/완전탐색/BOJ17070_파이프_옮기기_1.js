@@ -1,13 +1,3 @@
-// 가로 - 오른쪽, 오른쪽 아래
-// 세로 - 아래, 오른쪽 아래
-// 대각선 - 오른쪽, 아래, 오른쪽 아래
-
-// if(!map[i][j+1]) 오른쪽 이동
-// if(!map[i+1][j+1] && !map[i][j+1] && !map[i+1][j]) 오른쪽 아래 이동
-// if(!map[i+1][j]) 아래 이동
-
-// horizontal, vertical, diagonal 을 다음 재귀함수에 전달해서 현재 파이프의 상태(가로, 세로, 대각)을 판별함
-
 const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
 const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
 const N = +input[0];
