@@ -13,38 +13,22 @@ const arr = input.slice(1).map((e) => e.split(' ').map(Number));
 const answerArr = Array.from({ length: N }, () => Array(M).fill(0));
 let [n, m] = [N, M];
 
-let count = 0;
-while (n > 0 && m > 0) {
-    let len = (n - 1) * 2 + (m - 1) * 2;
-    if (len === 0) len = 1;
-    const lt = [count, count];
-    const rb = [N - 1 - count, M - 1 - count];
-    const row = makeArr(len, lt, rb);
-    const newRow = getRowAfterRotate(row, len);
-    getArrAfterRotate(newRow, lt, rb);
-    n -= 2;
-    m -= 2;
-    count++;
-}
-
-let answer = '';
-for (let i = 0; i < answerArr.length; i++) {
-    answer += answerArr[i].join(' ') + '\n';
-}
-console.log(answer.trimEnd());
-
 function makeArr(len, lt, rb) {
     const row = [];
     if (len === 1) row.push(arr[lt[0]][lt[1]]);
+    // 하
     for (let i = lt[0]; i < rb[0]; i++) {
         row.push(arr[i][lt[1]]);
     }
+    // 우
     for (let i = lt[1]; i < rb[1]; i++) {
         row.push(arr[rb[0]][i]);
     }
+    // 상
     for (let i = rb[0]; i > lt[0]; i--) {
         row.push(arr[i][rb[1]]);
     }
+    // 좌
     for (let i = rb[1]; i > lt[1]; i--) {
         row.push(arr[lt[0]][i]);
     }
@@ -65,16 +49,40 @@ function getRowAfterRotate(row, len) {
 
 function getArrAfterRotate(row, lt, rb) {
     let count = 0;
+    // 하
     for (let i = lt[0]; i < rb[0]; i++) {
         answerArr[i][lt[1]] = row[count++];
     }
+    // 우
     for (let i = lt[1]; i < rb[1]; i++) {
         answerArr[rb[0]][i] = row[count++];
     }
+    // 상
     for (let i = rb[0]; i > lt[0]; i--) {
         answerArr[i][rb[1]] = row[count++];
     }
+    // 좌
     for (let i = rb[1]; i > lt[1]; i--) {
         answerArr[lt[0]][i] = row[count++];
     }
 }
+
+let count = 0;
+while (n > 0 && m > 0) {
+    let len = (n - 1) * 2 + (m - 1) * 2;
+    if (len === 0) len = 1;
+    const lt = [count, count];
+    const rb = [N - 1 - count, M - 1 - count];
+    const row = makeArr(len, lt, rb);
+    const newRow = getRowAfterRotate(row, len);
+    getArrAfterRotate(newRow, lt, rb);
+    n -= 2;
+    m -= 2;
+    count++;
+}
+
+let answer = '';
+for (let i = 0; i < answerArr.length; i++) {
+    answer += answerArr[i].join(' ') + '\n';
+}
+console.log(answer.trimEnd());
