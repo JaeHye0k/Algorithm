@@ -13,37 +13,12 @@ for (let [y, x] of obstacles) {
 const dy = [-1, 1, 0, 0];
 const dx = [0, 0, -1, 1];
 
-class Queue {
-    constructor() {
-        this.queue = {};
-        this.front = 0;
-        this.rear = 0;
-    }
-    enqueue(value) {
-        this.queue[this.rear++] = value;
-    }
-    dequeue() {
-        const temp = this.queue[this.front];
-        delete this.queue[this.front];
-        this.front++;
-
-        if (this.rear === this.front) {
-            this.rear = this.front = 0;
-        }
-
-        return temp;
-    }
-    size() {
-        return this.rear - this.front;
-    }
-}
-
 function bfs() {
-    const queue = new Queue();
-    queue.enqueue([...start, 0]);
+    const queue = [[...start, 0]];
+    let front = 0;
 
-    while (queue.size() > 0) {
-        let [y, x, move] = queue.dequeue();
+    while (queue.length > front) {
+        let [y, x, move] = queue[front++];
         // 목적지에 도달했다면
         if (y === end[0] && x === end[1]) return move;
 
@@ -53,7 +28,7 @@ function bfs() {
 
             if (!outOfRange(ny, nx) && !visited[ny][nx] && availiable(ny, nx, i)) {
                 visited[ny][nx] = true;
-                queue.enqueue([ny, nx, move + 1]);
+                queue.push([ny, nx, move + 1]);
             }
         }
     }
@@ -94,14 +69,3 @@ function outOfRange(y, x) {
 
 let answer = bfs();
 console.log(answer);
-
-// 최단 거리 찾기
-// N * M 크기의 지도, A * B 크기의 유닛, K개의 장애물
-// 장애물은 1로 표시
-
-// start에서 시작
-// (y,x)에서 상,하,좌,우 확인.
-// 상 => for(let i=0; i<B; i++) (y-1, x+i) 모두 이동할 수 있을 때만 이동
-// 하 => for(let i=0; i<B; i++) (y+A, x+i)
-// 좌 => for(let i=0; i<A; i++) (y+i, x-1)
-// 우 => for(let i=0; i<A; i++) (y+i, x+B)
