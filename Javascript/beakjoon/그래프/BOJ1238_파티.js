@@ -3,35 +3,33 @@ const input = require('fs').readFileSync(filePath).toString().trim().split('\n')
 const [N, M, X] = input[0].split(' ').map(Number);
 const arr = input.slice(1, 1 + M).map((e) => e.split(' ').map(Number));
 const graph = Array.from({ length: N + 1 }, () => []);
-const reversedGraph = Array.from({ length: N + 1 }, () => []);
-const distance = Array(N + 1).fill(Infinity);
-const dists = Array(N + 1).fill(0);
+const reverseGraph = Array.from({ length: N + 1 }, () => []);
+const distance1 = Array(N + 1).fill(Infinity);
+const distance2 = Array(N + 1).fill(Infinity);
+let answer = 0;
 
-for (const [s, e, t] of arr) {
+arr.forEach(([s, e, t]) => {
     graph[s].push([e, t]);
-    reversedGraph[e].push([s, t]);
-}
+    reverseGraph[e].push([s, t]);
+});
 
 class PriorityQueue {
     constructor() {
         this.heap = [];
     }
-
-    enqueue(node, priority) {
-        this.heap.push({ node, priority });
-        this.heepifyUp(this.heap.length - 1);
+    enqueue(priority, node) {
+        this.heap.push({ priority, node });
+        this.heapifyUp(this.heap.length - 1);
     }
-
-    heepifyUp(idx) {
+    heapifyUp(idx) {
         while (idx > 0) {
-            const parent = (idx - 1) >> 1;
-            if (this.heap[parent].priority > this.heap[idx].priority) {
-                [this.heap[parent], this.heap[idx]] = [this.heap[idx], this.heap[parent]];
+            const pIdx = (idx - 1) >> 1;
+            if (this.heap[pIdx].priority > this.heap[idx].priority) {
+                [this.heap[pIdx], this.heap[idx]] = [this.heap[idx], this.heap[pIdx]];
             } else break;
-            idx = parent;
+            idx = pIdx;
         }
     }
-
     dequeue() {
         const min = this.heap[0];
         const temp = this.heap.pop();
@@ -40,54 +38,48 @@ class PriorityQueue {
             this.heap[0] = temp;
             this.heapifyDown(0);
         }
-
         return min;
     }
     heapifyDown(idx) {
         while (idx < this.heap.length - 1) {
-            const lc = (idx << 1) + 1;
-            const rc = (idx << 1) + 2;
+            const lcIdx = idx * 2 + 1;
+            const rcIdx = idx * 2 + 2;
             let smaller = idx;
-            if (this.heap[lc] && this.heap[lc].priority > this.heap[smaller].priority) {
-                smaller = lc;
-            }
-            if (this.heap[rc] && this.heap[rc].priority > this.heap[smaller].priority) {
-                smaller = rc;
-            }
-            if (idx === smaller) break;
-            [this.heap[idx], this.heap[smaller]] = [this.heap[smaller], this.heap[idx]];
+            if (this.heap[lcIdx] && this.heap[lcIdx].priority < this.heap[idx].priority) smaller = lcIdx;
+            if (this.heap[rcIdx] && this.heap[rcIdx].priority < this.heap[idx].priority) smaller = rcIdx;
+            if (smaller === idx) break;
+            [this.heap[smaller], this.heap[idx]] = [this.heap[idx], this.heap[smaller]];
             idx = smaller;
         }
     }
-    isEmpty() {
-        return this.heap.length === 0;
+    size() {
+        return this.heap.length;
     }
 }
 
-function dijkstra(start, graph) {
+function dijkstra(start, graph, distance) {
     const pq = new PriorityQueue();
+    pq.enqueue(0, start);
     distance[start] = 0;
-    pq.enqueue(start, 0);
 
-    while (!pq.isEmpty()) {
-        const { node, priority } = pq.dequeue();
+    while (pq.size() > 0) {
+        const { priority, node } = pq.dequeue();
         if (distance[node] < priority) continue;
-        for (const [next, cost] of graph[node]) {
-            // 최단거리 갱신
-            if (distance[next] > distance[node] + cost) {
-                distance[next] = distance[node] + cost;
-                pq.enqueue(next, distance[next]);
+        for (const [next, time] of graph[node]) {
+            const cost = distance[node] + time;
+            if (distance[next] > cost) {
+                distance[next] = cost;
+                pq.enqueue(cost, next);
             }
         }
     }
-
-    for (let i = 1; i < distance.length; i++) {
-        dists[i] += distance[i];
-    }
 }
 
-dijkstra(X, graph);
-distance.fill(Infinity);
-dijkstra(X, reversedGraph);
+dijkstra(X, graph, distance1);
+dijkstra(X, reverseGraph, distance2);
 
-console.log(Math.max(...dists));
+for (let i = 1; i <= N; i++) {
+    const dist = distance1[i] + distance2[i];
+    answer = Math.max(answer, dist);
+}
+console.log(answer);
