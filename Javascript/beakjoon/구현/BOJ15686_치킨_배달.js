@@ -6,40 +6,38 @@ const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/inp
 const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
 const [N, M] = input[0].split(' ').map(Number);
 const arr = input.slice(1).map((row) => row.split(' ').map(Number));
-const chicken = Array.from(Array(13), () => []);
-let count = 0;
+const house = [];
+const chicken = [];
+let answer = Infinity;
 
-// r,c치킨집 부터 모든 집 까지의 거리를 구하는 함수 O(N^2)
-function setDist(r, c, count) {
-    for (let i = 0; i < N; i++) {
-        for (let j = 0; j < N; j++) {
-            if (arr[i][j] === 1) {
-                chicken[count].push(Math.abs(r - i) + Math.abs(c - j));
+function combination(cur, chickens) {
+    // 치킨집이 M개가 되었을 경우
+    // 모든 집부터 M개의 치킨집 까지의 치킨 거리를 구함
+    if (chickens.length === M) {
+        let chickenDistOfCity = 0; // 도시의 치킨 거리
+        for (const [hy, hx] of house) {
+            let chickenDist = Infinity; // 현재 집의 치킨 거리
+            for (const num of chickens) {
+                const [cy, cx] = chicken[num];
+                const dist = Math.abs(hy - cy) + Math.abs(hx - cx);
+                chickenDist = Math.min(chickenDist, dist);
             }
+            chickenDistOfCity += chickenDist;
         }
+        answer = Math.min(answer, chickenDistOfCity);
+    }
+
+    for (let i = cur; i < chicken.length; i++) {
+        combination(i + 1, [...chickens, i]);
     }
 }
 
 for (let i = 0; i < N; i++) {
     for (let j = 0; j < N; j++) {
-        if (arr[i][j] === 2) {
-            setDist(i, j, count);
-            count++;
-        }
+        if (arr[i][j] === 1) house.push([i, j]);
+        else if (arr[i][j] === 2) chicken.push([i, j]);
     }
 }
 
-const answer = [];
-const sum = Array.from(Array(13), () => []);
-for (let i = 0; i < count; i++) {
-    for (let j = 0; j < chicken[i].length; j++) {
-        if (answer[j] === undefined) answer[j] = chicken[i][j];
-        else answer[j] = Math.min(answer[j], chicken[i][j]);
-        if (j === 0) sum[i].push(chicken[i][j]);
-        else sum[i].push(sum[i][j - 1] + chicken[i][j]);
-    }
-}
-
-console.table(chicken);
+combination(0, []);
 console.log(answer);
-console.table(sum);
