@@ -17,15 +17,11 @@ const dy = [0, 0, 1, -1];
 function bfs(x, y, D) {
     const queue = [[x, y]];
     let front = 0;
-    if (result[y][x] === 'S') {
-        result[y][x] = 'F';
-        count++;
-    }
     const i = direction[D];
     while (queue.length > front) {
         const [x, y] = queue[front++];
         const height = arr[y][x];
-        for (let j = 1; j < height; j++) {
+        for (let j = 0; j < height; j++) {
             const nx = x + dx[i] * j;
             const ny = y + dy[i] * j;
             if (nx >= 0 && ny >= 0 && nx < M && ny < N && result[ny][nx] === 'S') {
