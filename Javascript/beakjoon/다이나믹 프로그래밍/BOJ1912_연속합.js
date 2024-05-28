@@ -5,6 +5,6 @@ const arr = input[1].split(' ').map(Number);
 
 let dp = arr.map((e) => e);
 for (let i = 1; i < n; i++) {
-    dp[i] = Math.max(dp[i], dp[i] + dp[i - 1], dp[i] + arr[i - 1]);
+    dp[i] = Math.max(dp[i], dp[i] + dp[i - 1]);
 }
 console.log(Math.max(...dp));
