@@ -49,7 +49,7 @@ while (true) {
     }
     if (isDistributed) {
         answer++;
-        visited.forEach((row) => row.fill(0));
+        visited.forEach((row) => row.fill(false));
         isDistributed = false;
     } else break;
 }
