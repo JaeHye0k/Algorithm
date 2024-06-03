@@ -2,7 +2,7 @@ const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/inp
 const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
 const [N, M] = input[0].split(' ').map(Number);
 const arr = input[1].split(' ').map(Number);
-let answer = Infinity;
+let answer = 0;
 
 function binarySearch(mid) {
     let count = 1; // 구간의 개수
