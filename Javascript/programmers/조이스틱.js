@@ -3,8 +3,8 @@ function solution(name) {
     let min = name.length - 1; // 최소 이동 횟수
 
     for (let i = 0; i < name.length; i++) {
-        const curAlphabet = name[i].codePointAt() - 65;
-        const dist = getDist(0, curAlphabet, 26);
+        const curAlphabet = name[i].codePointAt();
+        const dist = getDist(65, curAlphabet, 26);
         answer += dist;
 
         let nextIdx = i + 1;
