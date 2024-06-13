@@ -158,3 +158,12 @@ function solution() {
 // x...x
 // 1
 // 4
+
+// answer
+// .....
+// .....
+// .xxx.
+// .x.xx
+// xx..x
+// x...x
+// x...x
