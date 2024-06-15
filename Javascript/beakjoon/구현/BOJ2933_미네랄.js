@@ -112,7 +112,7 @@ function solution() {
                 // 다음 칸이 미네랄이거나, 바닥보다 아래라면 다음 차례에서 아래로 내려가지 못함
                 if (cave[y - 1][x] === 'x' || y - 1 === -1) {
                     cantFalldown = true;
-                    continue;
+                    break;
                 }
 
                 // 한 칸은 무조건 떨어짐
@@ -123,8 +123,8 @@ function solution() {
             // 다음 차례에 낙하가 불가능한 경우
             if (cantFalldown) {
                 // 부분적으로 떨어졌던 미네랄들 다시 되돌리기
-                for (let i = partOfCluster.length - 1; i >= 0; i--) {
-                    const [y, x] = partOfCluster[i];
+                while (partOfCluster.length) {
+                    const [y, x] = partOfCluster.pop();
                     cave[y - 1][x] = '.';
                     cave[y][x] = 'x';
                 }
