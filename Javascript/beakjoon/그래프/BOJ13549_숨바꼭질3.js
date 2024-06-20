@@ -1,71 +1,64 @@
-class Deque {
-    constructor() {
-        this.deque = {};
-        this.front = 0;
-        this.rear = 0;
-    }
-    pushFront(element) {
-        if (this.deque[this.front] === undefined) this.deque[this.front] = element;
-        else {
-            this.front--;
-            this.deque[this.front] = element;
-        }
-    }
-    popFront() {
-        const temp = this.deque[this.front];
-        delete this.deque[this.front];
-        this.front++;
-        if (this.front > this.rear) {
-            this.front = this.rear = 0;
-        }
-        return temp;
-    }
-    pushBack(element) {
-        if (this.deque[this.rear] === undefined) this.deque[this.rear] = element;
-        else {
-            this.rear++;
-            this.deque[this.rear] = element;
-        }
-    }
-    popBack() {
-        const temp = this.deque[this.rear];
-        delete this.deque[this.rear];
-        this.rear--;
-        if (this.front > this.rear) {
-            this.front = this.rear = 0;
-        }
-        return temp;
-    }
-    size() {
-        if (this.deque[this.front] === undefined) return 0;
-        return this.rear - this.front + 1;
-    }
-}
-
 const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
 const [N, K] = require('fs').readFileSync(filePath).toString().trim().split(' ').map(Number);
-const visited = Array(10 ** 5 + 1).fill(false);
-const deque = new Deque();
-deque.pushBack([N, 0]);
-visited[N] = true;
-let answer;
+const distance = Array(10 ** 5 + 1).fill(Infinity);
 
-while (deque.size() > 0) {
-    const [cur, sec] = deque.popFront();
-    if (cur === K) {
-        answer = sec;
-        break;
+class PriorityQueue {
+    constructor(time, cur) {
+        this.heap = [{ time, cur }];
     }
+    enqueue(time, cur) {
+        this.heap.push({ time, cur });
+        this.heapifyUp(this.heap.length - 1);
+    }
+    dequeue() {
+        const min = this.heap[0];
+        const temp = this.heap.pop();
+        if (this.heap.length > 0) {
+            this.heap[0] = temp;
+            this.heapifyDown(0);
+        }
+        return min;
+    }
+    heapifyUp(idx) {
+        while (idx > 0) {
+            let pIdx = (idx - 1) >> 1;
+            if (this.heap[idx].time < this.heap[pIdx].time) {
+                [this.heap[idx], this.heap[pIdx]] = [this.heap[pIdx], this.heap[idx]];
+            } else break;
+            pIdx = idx;
+        }
+    }
+    heapifyDown(idx) {
+        while (idx < this.heap.length - 1) {
+            let lcIdx = (idx << 1) + 1;
+            let rcIdx = (idx << 1) + 2;
+            let smaller = idx;
+            if (this.heap[lcIdx] && this.heap[lcIdx].time < this.heap[smaller].time) smaller = lcIdx;
+            if (this.heap[rcIdx] && this.heap[rcIdx].time < this.heap[smaller].time) smaller = rcIdx;
+            if (smaller === idx) break;
+            [this.heap[smaller], this.heap[idx]] = [this.heap[idx], this.heap[smaller]];
+            idx = smaller;
+        }
+    }
+    size() {
+        return this.heap.length;
+    }
+}
+
+const pq = new PriorityQueue(0, N);
+distance[N] = 0;
+
+while (pq.size() > 0) {
+    const { time, cur } = pq.dequeue();
     for (const next of [cur - 1, cur + 1, cur * 2]) {
-        if (!visited[next] && next >= 0 && next <= 100_000) {
-            if (next === cur * 2) {
-                deque.pushFront([next, sec]);
-            } else {
-                deque.pushBack([next, sec + 1]);
-            }
-            visited[next] = true;
+        let cost;
+        if (next === cur * 2) cost = 0;
+        else cost = 1;
+        if (distance[next] > distance[cur] + cost) {
+            distance[next] = distance[cur] + cost;
+            pq.enqueue(time + cost, next);
         }
     }
 }
 
-console.log(answer);
+console.log(distance[K]);
