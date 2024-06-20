@@ -25,7 +25,7 @@ class PriorityQueue {
             if (this.heap[idx].time < this.heap[pIdx].time) {
                 [this.heap[idx], this.heap[pIdx]] = [this.heap[pIdx], this.heap[idx]];
             } else break;
-            pIdx = idx;
+            idx = pIdx;
         }
     }
     heapifyDown(idx) {
