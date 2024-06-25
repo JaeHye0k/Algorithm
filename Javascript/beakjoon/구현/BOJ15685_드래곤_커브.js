@@ -35,34 +35,25 @@ function solution() {
 
     function dragonCurve(x, y, d, g) {
         map[y][x] = 1;
-        let order = [dir[d]];
-        let newOrder = [];
+        let order = [d];
         for (let i = 0; i <= g; i++) {
-            while (order.length) {
-                const [dx, dy] = order.pop();
-                x += dx;
-                y += dy;
-                if (y <= 100 && x <= 100 && y >= 0 && x >= 0) map[y][x] = 1;
-                newOrder.push(rotate(dx, dy));
+            for (let j = order.length - 1; j >= 0; j--) {
+                order.push((order[j] + 1) % 4);
             }
-            order = newOrder.map((e) => [...e]);
+        }
+        for (let i = 0; i < order.length; i++) {
+            const [dx, dy] = dir[order[i]];
+            x += dx;
+            y += dy;
+            if (y <= 100 && x <= 100 && y >= 0 && x >= 0) map[y][x] = 1;
         }
     }
 
     function countRect() {
-        for (let i = 0; i < 100; i++) {
-            for (let j = 0; j < 100; j++) {
+        for (let i = 0; i <= 100; i++) {
+            for (let j = 0; j <= 100; j++) {
                 if (map[i][j] && map[i + 1][j] && map[i][j + 1] && map[i + 1][j + 1]) answer++;
             }
         }
     }
-}
-
-function rotate(x, y) {
-    // [+1, 0] -> [0, +1]
-    // [0, +1] -> [-1, 0]
-    // [-1, 0] -> [0, -1]
-    // [0, -1] -> [+1, 0]
-    if (x !== 0) return [0, -x];
-    else if (y !== 0) return [y, 0];
 }
