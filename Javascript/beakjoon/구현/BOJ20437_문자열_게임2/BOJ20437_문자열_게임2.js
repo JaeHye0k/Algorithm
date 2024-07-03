@@ -30,17 +30,12 @@ while (T--) {
         // 어떤 문자를 K개 포함할경우 가장 짧은 연속 문자열 찾기
         if (obj[char].length >= K) {
             const arr = obj[char];
-            let min = Infinity;
-            let max = 0;
 
             for (let i = 0; i <= arr.length - K; i++) {
-                const subArr = arr.slice(i, i + K);
-                min = Math.min(min, subArr.at(-1) - subArr[0] + 1);
-                max = Math.max(max, subArr.at(-1) - subArr[0] + 1);
+                const [left, right] = [arr[i], arr[i + K - 1]];
+                answerThree = Math.min(answerThree, right - left + 1);
+                answerFour = Math.max(answerFour, right - left + 1);
             }
-
-            answerThree = Math.min(answerThree, min); // 최소 길이
-            answerFour = Math.max(answerFour, max); // 최대 길이
         }
     }
     if (answerThree === Infinity || answerFour === 0) {
