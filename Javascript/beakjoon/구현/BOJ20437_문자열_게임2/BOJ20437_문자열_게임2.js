@@ -38,7 +38,9 @@ while (T--) {
             }
         }
     }
-    if (answerThree === Infinity || answerFour === 0) {
+    // 하나의 조건이 만족하면 answerThree와 answerFour 둘 다 갱신해주기 때문에
+    // 둘 중에 하나만 비교해줘도 됨
+    if (answerThree === Infinity) {
         answer += -1 + '\n';
     } else {
         answer += answerThree + ' ' + answerFour + '\n';
