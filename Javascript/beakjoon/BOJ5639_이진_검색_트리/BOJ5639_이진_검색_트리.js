@@ -1,57 +1,35 @@
 const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
 // const input = require('fs').readFileSync(filePath).toString().trim().split('\n').map(Number);
-const input = Array.from({ length: 10000 }, (e, i) => i);
-console.log(input);
+const input = Array.from({ length: 5 }, (e, i) => i + 1);
+// console.log(input);
+const stack = [input[0]];
+let result = '';
 
-const tree = makeTree(input);
-const result = getPosfixResult(tree);
-console.log(result);
+for (let i = 1; i < input.length; i++) {
+    const node = input[i];
+    let top = stack[stack.length - 1];
+    let topOfTop = stack[stack.length - 2];
 
-// 전위 순회 결과로 트리 생성
-function makeTree(input) {
-    const tree = [input[0]];
-    for (let i = 1; i < input.length; i++) {
-        treeDown(input[i]);
-    }
-
-    function treeDown(val) {
-        let cur, isLeft, lcIdx, rcIdx, isLeftExist, isRightExist;
-        let idx = 0;
-
-        do {
-            cur = tree[idx];
-            isLeft = cur > val;
-            [lcIdx, rcIdx] = [idx * 2 + 1, idx * 2 + 2];
-            [isLeftExist, isRightExist] = [!!tree[lcIdx], !!tree[rcIdx]];
-
-            if (isLeft) {
-                if (isLeftExist) idx = lcIdx;
-                else tree[lcIdx] = val;
-            } else {
-                if (isRightExist) idx = rcIdx;
-                else tree[rcIdx] = val;
+    if (node < top) stack.push(node);
+    else {
+        if (topOfTop === undefined) stack.push(node);
+        else if (topOfTop > node) stack.push(node);
+        else {
+            while (node > topOfTop && topOfTop !== undefined) {
+                result += stack.pop() + '\n';
+                topOfTop = stack[stack.length - 2];
             }
-        } while (idx === lcIdx || idx === rcIdx); // 인덱스가 변경되지 않았다면 종료
+            stack.push(node);
+        }
     }
-
-    return tree;
 }
 
-// 트리를 후위 순회한 결과 반환
-function getPosfixResult(tree) {
-    let result = '';
+popStackSpare();
+console.log(result.trimEnd());
 
-    searchPosfix(0);
-
-    // 트리 후위 순회
-    function searchPosfix(idx) {
-        const [lcIdx, rcIdx] = [idx * 2 + 1, idx * 2 + 2];
-        const [isLeftExist, isRightExist] = [!!tree[lcIdx], !!tree[rcIdx]];
-
-        if (isLeftExist) searchPosfix(lcIdx);
-        if (isRightExist) searchPosfix(rcIdx);
-        result += tree[idx] + '\n';
+function popStackSpare() {
+    while (stack.length) {
+        const node = stack.pop();
+        result += node + '\n';
     }
-
-    return result.trimEnd();
 }
