@@ -1,20 +1,14 @@
 function solution(n) {
-    var answer = 0;
-    const arr = Array.from({length: n+1}, (_, i) => i);
-    let [start, end] = [1,1];
-    
-    while(end <= n && start <= end) {
-        const sum = getSum(start, end, arr);
-        if(sum === n) answer++;
-        if(sum >= n) start++;
-        if(sum < n) end++;
-    }
-    
-    return answer;
-}
+    let answer = 0;
 
-function getSum(start, end, arr) {
-    return (arr[start] + arr[end]) * (end - start + 1) / 2;
+    for (var i = 1; i <= Math.sqrt(n); i++) {
+        if (n % i == 0) {
+            if (i % 2 == 1) answer++; // i가 홀수이면 카운트 증가
+            if ((n / i) % 2 == 1 && i * i !== n) answer++; // num / i도 홀수이면 카운트 증가
+        }
+    }
+
+    return answer;
 }
 
 /*
