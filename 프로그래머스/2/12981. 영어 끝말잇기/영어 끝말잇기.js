@@ -1,9 +1,11 @@
 function solution(n, words) {
     const appear = new Set();
+    appear.add(words[0]);
     
-    for(let i = 0; i < words.length; i++) {
+    for(let i = 1; i < words.length; i++) {
         const isAleadyAppear = appear.has(words[i]);
-        const isValidCharacter = i > 0 ? words[i - 1].at(-1) === words[i][0] : true;
+        const isValidCharacter = words[i - 1].at(-1) === words[i][0];
+        
         if(isAleadyAppear || !isValidCharacter) {
             const num = i % n + 1;
             const turn = Math.floor(i / n) + 1;
