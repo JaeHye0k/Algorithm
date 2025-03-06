@@ -11,9 +11,9 @@ function solution(k, tangerine) {
         }
     }
     
-    const sortedArr = Object.entries(count).sort((a , b) => b[1] - a[1]);
+    const sortedArr = Object.values(count).sort((a , b) => b - a);
     
-    for(const [species, count] of sortedArr) {
+    for(const count of sortedArr) {
         answer++;
         k -= count;
         if(k <= 0) break;
