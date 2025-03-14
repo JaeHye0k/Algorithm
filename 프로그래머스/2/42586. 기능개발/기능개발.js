@@ -1,25 +1,17 @@
 function solution(progresses, speeds) {
-    const answer = [];
-    let lastDeployIdx = -1;
-    let totalDeployCount = 0;
-    const prevProgresses = [...progresses];
+    const answer = new Array(100).fill(0);
+    // 각 기능마다 배포까지 며칠걸리는지 저장
+    const days = progresses.map((progress, i) => Math.ceil((100 - progress) / speeds[i]));
+    let maxDay = days[0];
     
-    while(totalDeployCount < progresses.length) {
-        let curDeployCount = 0;
-        for(let i = lastDeployIdx + 1; i < progresses.length; i++) {
-            prevProgresses[i] += speeds[i];
-        }
-        for(let i = lastDeployIdx + 1; i < prevProgresses.length; i++) {
-            if(prevProgresses[i] >= 100) {
-                curDeployCount++;
-                lastDeployIdx = i;
-            }
-            else break;
-        }
-        if(curDeployCount > 0) answer.push(curDeployCount);
-        totalDeployCount += curDeployCount;
+    for(let i = 0; i < days.length; i++) {
+        if(days[i] > maxDay) {
+            maxDay = days[i];
+        } 
+        answer[maxDay]++;
     }
-    return answer;
+    
+    return answer.filter((count) => count !== 0);
 }
 
 
