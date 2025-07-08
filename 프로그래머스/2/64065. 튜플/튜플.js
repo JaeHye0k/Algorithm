@@ -1,7 +1,7 @@
 function solution(s) {
     var answer = [];
     
-    const tuple = strToTuple(s);
+    const tuple = JSON.parse(s.replace(/\{/g, '[').replace(/\}/g,']'));
     tuple.sort((a, b) => a.length - b.length);
     for(const el of tuple) {
         const item = el.find((e) => !answer.includes(e));
@@ -9,16 +9,6 @@ function solution(s) {
     }
     
     return answer;
-}
-
-function strToTuple(s) {
-    const regex = /\{.+?\}/g;
-    s = s.slice(1, s.length-1);
-    const arr = s.match(regex);
-    
-    const tuple = arr.map((str) => str.slice(1, str.length-1).split(',').map(Number));
-    
-    return tuple;
 }
 
 /*
