@@ -2,31 +2,17 @@ function solution(dirs) {
     var answer = 0;
 
     const n = 5;
-    const v = n * 2 + 1; // 정점의 개수
-    const r = v - 1; // 길의 개수
-    const center = Math.floor((v + r) / 2);
-    let x = center;
-    let y = center;
-    const visited = Array.from({length: v + r}, () => Array(v + r).fill(false));
-    visited[x][y] = true;
+    let [x, y] = [0, 0];
+    const visited = new Map();
     
     for(const dir of dirs) {
-        let [nx, ny] = move(dir, x, y);
-        if(nx < 0 || ny < 0 || nx >= v+r || ny >= v+r) continue;
-        // 이미 방문한 길이라면
-        if(visited[nx][ny]) {
-            [x, y] = move(dir, nx, ny);
-            continue;
-        }
-        visited[nx][ny] = true;
-        [nx, ny] = move(dir, nx, ny);
-        visited[nx][ny] = true;
-        answer += 1;
-        x = nx;
-        y = ny;
+        const [nx, ny] = move(dir, x, y);
+        if(nx < -n || ny < -n || nx > n || ny > n) continue;
+        const road = generateKey(x, y, nx, ny);
+        visited.set(road, true);
+        [x, y] = [nx, ny];
     }
-    
-    return answer;
+    return visited.size;
 }
 
 function move(dir, x, y) {
@@ -40,10 +26,18 @@ function move(dir, x, y) {
     return [x+dx, y+dy];
 }
 
+function generateKey(x, y, nx, ny) {
+    const x1 = Math.min(x, nx);
+    const y1 = Math.min(y, ny);
+    const x2 = Math.max(x, nx);
+    const y2 = Math.max(y, ny);
+    
+    return `${x1},${y1},${x2},${y2}`
+}
+
 
 
 /* 
     정점이 아니라 '길'에 방문 여부를 표시해야 됨
     정점과 길을 모두 2차원 배열로 저장
-    
 */
