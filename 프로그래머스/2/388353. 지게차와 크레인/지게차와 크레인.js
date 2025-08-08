@@ -5,19 +5,15 @@ function solution(storage, requests) {
     for(const request of requests) {
         const isCrain = request.length === 2;
         const newStorage = storage.map((e) => [...e]);
-        if(isCrain) {
-            for(let i=0; i<storage.length; i++) {
-                for(let j=0; j<storage[0].length; j++) {
-                    if(storage[i][j] === request[0]) newStorage[i][j] = undefined;
+        for(let i=0; i<storage.length; i++) {
+            for(let j=0; j<storage[0].length; j++) {
+                if(isCrain && storage[i][j] === request[0]) {
+                    newStorage[i][j] = undefined;
+                } 
+                if(!isCrain && storage[i][j] === request[0] && bfs(i, j, storage)) {
+                    newStorage[i][j] = undefined;
                 }
-            }
-        } else {
-            for(let i=0; i<storage.length; i++) {
-                for(let j=0; j<storage[0].length; j++) {
-                    if(storage[i][j] === request[0] && bfs(i, j, storage)) {
-                        newStorage[i][j] = undefined;
-                    }
-                }
+
             }
         }
         storage = newStorage;
@@ -30,6 +26,14 @@ function solution(storage, requests) {
     }
     
     return answer;
+}
+
+function takeout(storage, callback) {
+    for(let i=0; i<storage.length; i++) {
+        for(let j=0; j<storage[0].length; j++) {
+            callback();
+        }
+    }
 }
 
 function bfs(x, y, storage) {
