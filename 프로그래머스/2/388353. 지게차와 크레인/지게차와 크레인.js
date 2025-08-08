@@ -28,14 +28,6 @@ function solution(storage, requests) {
     return answer;
 }
 
-function takeout(storage, callback) {
-    for(let i=0; i<storage.length; i++) {
-        for(let j=0; j<storage[0].length; j++) {
-            callback();
-        }
-    }
-}
-
 function bfs(x, y, storage) {
     const dx = [-1, 1, 0, 0];
     const dy = [0, 0, -1, 1];
