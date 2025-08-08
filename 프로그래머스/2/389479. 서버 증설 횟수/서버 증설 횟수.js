@@ -1,11 +1,11 @@
 function solution(players, m, k) {
     var answer = 0;
-    let servers = []; // []
-    for(let i=0; i<24; i++) { // 2
-        const n = servers.length + 1; //  1
-        if(players[i] >= n * m) { // 3 >= 1 * 3
-            const overPlayerCount = players[i] - n * m + 1; // 5 - 3 + 1 = 3 만약 
-            let addedServerCount = Math.floor(overPlayerCount / m); // 3 / 3 = 0
+    let servers = []; 
+    for(let i=0; i<24; i++) { 
+        const n = servers.length + 1;
+        if(players[i] >= n * m) { 
+            const overPlayerCount = players[i] - n * m + 1;
+            let addedServerCount = Math.floor(overPlayerCount / m); 
             if(overPlayerCount % m) addedServerCount++;
             answer += addedServerCount;
             for(let j=0; j<addedServerCount; j++) {
