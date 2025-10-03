@@ -1,37 +1,22 @@
 function solution(record) {
     const messages = [];
-    const users = new Map();
-    const userMessages = new Map();
+    const users = {};
     
+    for(let i=0; i<record.length; i++) {
+        const [action, userId, nickname] = record[i].split(' ');
         
-    function toMessage(message) {
-        messages.push(message);
-        return messages.length - 1;
+        if(action === "Enter" || action === "Change") {
+            users[userId] = nickname;
+        }
     }
     
-    const actionMap = new Map([
-        ['Enter', (action, userId, nickname) => {
-            const idx = toMessage(`${userId}님이 들어왔습니다.`);
-            userMessages.set(userId, [...userMessages.get(userId) ?? [], idx]);
-            users.set(userId, nickname);
-        }],
-        ['Leave', (action, userId) => {
-            const idx = toMessage(`${userId}님이 나갔습니다.`);
-            userMessages.set(userId, [...userMessages.get(userId), idx]);
-        }],
-        ['Change', (action, userId, nickname) => users.set(userId, nickname)]
-    ]);
-
-    
-    for(const rc of record) {
-        const [action, userId, nickname] = rc.split(' ');
-        actionMap.get(action)(action, userId, nickname);
-    }
-    
-    for(const [userId, indices] of userMessages) {
-        const nickname = users.get(userId);
-        for(const i of indices) {
-            messages[i] = messages[i].replace(userId, nickname);
+    for(let i=0; i<record.length; i++) {
+        const [action, userId, nickname] = record[i].split(' ');
+        
+        if(action === "Enter") {
+            messages.push(users[userId] + '님이 들어왔습니다.');
+        } else if(action === "Leave") {
+            messages.push(users[userId] + '님이 나갔습니다.');
         }
     }
     
@@ -41,6 +26,8 @@ function solution(record) {
 
 
 /*
+
+52분
     users = Map{ [userId]: nickname } // 유저id 와 대응하는 닉네임 저장
     messages = []; // 메시지가 저장될 배열 (닉네임 대신 userId가 표시됨)
     
