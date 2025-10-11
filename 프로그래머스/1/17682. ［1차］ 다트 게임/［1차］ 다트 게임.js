@@ -5,28 +5,29 @@ function solution(dartResult) {
         ['T', 3]
     ]);
     
+    const optionMap = new Map([
+        ['*', 2],
+        ['#', -1],
+        [undefined, 1]
+    ]);
+    
+    const darts = dartResult.match(/\d.?\D/g);
+    
     let points = []; // 각 라운드 별 받는 점수 
     
-    for(let i=0; i<dartResult.length;) {
-        let point = 0;
-        if(dartResult[i] + dartResult[i+1] === '10') {
-            point = 10;
-            i += 2;
-        } else {
-            point = parseInt(dartResult[i]);
-            i++;
-        }
-        const bonus = bonusMap.get(dartResult[i]); 
-        points.push(point ** bonus); 
-        i++;
+    for(let i=0; i<darts.length; i++) {
         
-        if(dartResult[i] === '*') {
-            if(i > 0) points[points.length-2] *= 2;
-            points[points.length-1] *= 2; 
-            i++;
-        } else if(dartResult[i] === '#') {
-            points[points.length-1] *= -1;
-            i++;
+        const parts = darts[i].match(/(^\d+)(S|D|T)(\*|#)?/).slice(1);
+        const point = parseInt(parts[0]);
+        const bonus = bonusMap.get(parts[1]); 
+        points.push(point ** bonus); 
+        
+        const option = parts[2];
+        if(option === '*') {
+            if(i > 0) points[points.length-2] *= optionMap.get(option);
+            points[points.length-1] *= optionMap.get(option); 
+        } else {
+            points[points.length-1] *= optionMap.get(option)
         }
     }
     
