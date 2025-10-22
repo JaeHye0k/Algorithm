@@ -1,32 +1,14 @@
 function solution(N, stages) {
     const answer = [];
-    const fail = new Array(N+1).fill(0);
     
     for(let i=1; i<=N; i++) {
-        let notClear = 0;
-        let visit = 0;
-        for(let j=0; j<stages.length; j++) {
-            if(stages[j] === i) { 
-                notClear++;
-                visit++;
-            } 
-            if(stages[j] > i) { 
-                visit++;
-            }
-        }
-        fail[i] = visit > 0 ? notClear / visit : 0;
+        const notClear = stages.filter((e) => e === i).length;
+        const reach = stages.filter((e) => e >= i).length;
+        answer.push([i, notClear / reach]);
     }
     
-    for(let i=1; i<fail.length; i++) {
-        answer.push({ stage: i, percent: fail[i] });
-    }
-    
-    answer.sort((a, b) => {
-        if(a.percent === b.percent) return a.stage - b.stage;
-        return b.percent - a.percent;
-    })
-    
-    return answer.map(e => e.stage);
+    answer.sort((a, b) => b[1] - a[1]);
+    return answer.map((e) => e[0]);
 }
 
 
