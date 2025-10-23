@@ -1,29 +1,10 @@
 function solution(lottos, win_nums) {
-    var answer = [];
-    let match = 0;
-    let zero = 0;
-    const rank = new Map([
-        [6, 1],
-        [5, 2],
-        [4, 3],
-        [3, 4],
-        [2, 5],
-    ])
+    const rank = [6, 6, 5, 4, 3, 2, 1];
+
+    const match = lottos.filter((lotto) => win_nums.includes(lotto)).length;
+    const zero = lottos.filter((lotto) => lotto === 0).length;   
     
-    for(const lotto of lottos) {
-        if(lotto === 0) {
-            zero++;
-            continue;
-        } 
-        if(win_nums.includes(lotto)) {
-            match++;
-        }
-    }
-    
-    answer[0] = rank.has(match+zero) ? rank.get(match+zero) : 6;
-    answer[1] = rank.has(match) ? rank.get(match) : 6;
-    
-    return answer;
+    return [rank[match + zero], rank[match]];
 }
 
 /*
