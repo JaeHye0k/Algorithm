@@ -1,22 +1,19 @@
 function solution(s) {
     var answer = 0;
     let x = null;
-    let xCount = 0;
-    let notXCount = 0;
+    let count = 0;
     
     for(let i=0; i<s.length; i++) {
         if(x === null) x = s[i];
-        if(s[i] === x) xCount++;
-        else notXCount++;
-        if(xCount === notXCount) {
+        if(s[i] === x) count++;
+        else count--;
+        if(count === 0) {
             answer++;
             x = null;
-            xCount = 0;
-            notXCount =0;
         }
     }
     
-    if(xCount !== 0) answer++;
+    if(count !== 0) answer++;
     
     return answer;
 }
